@@ -1,26 +1,21 @@
-// const moduleAlias = require('module-alias');
-// moduleAlias.addAliases({   
-//     '@models'   :  './models/connection.js',
-//         '@schema'   :   __dirname + '/models/schema',
-//         '@userEvent'    :   __dirname + '/models/events/user',    
-// });
+global.port = 9999
 
 //db connection
-require('./models/connection').connectDB();
+require('./connection').connectDB()
 
-const express = require('express');
-const app = express();
+//modules for express
+const express = require('express')
+const app = express()
 const bodyParser = require('body-parser')
 
-app.use(bodyParser.urlencoded({extended : true}));
-app.use(bodyParser.json());
 
+
+app.use(bodyParser.urlencoded({extended : true}))
+app.use(bodyParser.json())
+
+//will automatically search for index.js in './routes' folder
 app.use(require('./routes'))
 
-app.use(    (req,res)   =>  {
-    res.status(404).send('Unknown Request');
-})
-
-app.listen(9999,    ()  =>  {
-    console.log('Server Running...');
+app.listen(global.port , ()  =>  {
+    console.log('Server Running...')
 })
