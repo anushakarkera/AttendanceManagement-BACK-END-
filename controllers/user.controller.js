@@ -21,7 +21,37 @@ module.exports.login = async(req, res) => {
 }
 
 module.exports.signup = (req,res,next) =>{
-    res.send('inside Signup')
+    var user = new User();
+    user.fullName = req.body.fullName;
+    user.email = req.body.email;
+    user.password = req.body.password;
+    user.phone = req.body.phone;
+    user.gender = req.body.gender;
+    user.city = req.body.city;
+    user.save((err, doc) => {
+        if (!err) {
+            var result = {}
+            
+            result.responseCode = 200;
+            result.status = "OK";
+            result.message = "Successfully registered"
+            result.data = doc;
 
+            res.send(result);
 
+        }
+        
+        else
+        {
+            if(err.code === 11000){
+             var error = {};
+             error.code = 409;
+             error.status = 'conflict';
+             error.message = 'duplicate email';
+              res.send(error);
+            }
+            else
+                return next(err);
+        }
+    });
 }

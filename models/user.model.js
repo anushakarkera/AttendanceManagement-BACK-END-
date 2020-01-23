@@ -4,8 +4,8 @@ const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-const userSchema = mongoose.Schema({
-    name: {
+var userSchema = new mongoose.Schema({
+    fullName: {
         type: String,
         required: true,
         trim: true
@@ -13,27 +13,29 @@ const userSchema = mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true,
-        lowercase: true,
-        validate: value => {
-            if (!validator.isEmail(value)) {
-                throw new Error({error: 'Invalid Email address'})
-            }
-        }
+        unique: true
     },
     password: {
         type: String,
-        required: true,
-        minLength: 7
+        required: true
     },
+    phone: {
+        type: String,
+    },
+    gender: {
+        type: String,
+    },
+    city: {
+        type: String,
+    },
+    saltSecret: String,
     tokens: [{
         token: {
             type: String,
             required: true
         }
     }]
-})
-
+});
 userSchema.pre('save', async function (next) {
     // Hash the password before saving the user model
     const user = this
@@ -42,6 +44,19 @@ userSchema.pre('save', async function (next) {
     }
     next()
 })
+
+userSchema.pre('save', function (next) {
+
+    if(this.saltSecret === undefined){
+        bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(this.password, salt, (err, hash) => {
+                this.password = hash;
+                this.saltSecret = salt;
+                next();
+            });
+        });
+    }
+});
 
 userSchema.methods.generateAuthToken = async function() {
     const user = this
@@ -64,5 +79,3 @@ userSchema.statics.findByCredentials = async (email, password) => {
 }
 
 const User = mongoose.model('User', userSchema)
-
-module.exports = User
