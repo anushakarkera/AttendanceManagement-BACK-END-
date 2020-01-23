@@ -7,7 +7,7 @@ mongoose.set('useUnifiedTopology', true);
 
 
 //Register schema to models here
-
+require('./models/user.model')
 
 
 module.exports.connectDB = () => {
