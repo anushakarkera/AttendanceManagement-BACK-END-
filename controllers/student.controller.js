@@ -8,7 +8,7 @@ if(b)
         res.send(b);
 else 
     {
-        var errr ={};
+        var errr={};
         errr.code=404
         errr.status='Not found';
         errr.message='Students details not found';
