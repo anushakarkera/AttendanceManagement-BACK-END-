@@ -26,7 +26,6 @@ var userSchema = new mongoose.Schema({
     city: {
         type: String
     },
-    
     tokens: [{
         token: {
             type: String,
@@ -63,5 +62,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
     return user
 }
 
+const abcd = 10;
+console.log(abcd);
 const User = mongoose.model('User', userSchema);
 module.exports  = User;
