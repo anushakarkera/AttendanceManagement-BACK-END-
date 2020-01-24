@@ -58,18 +58,22 @@ module.exports.signup = (req,res,next) =>{
 }
 
 module.exports.profile= (req,res,next)=>{
+    //extract payload
     const token = req.header('Authorization').replace('Bearer ', '')
+    //retrieve data
     const data = jwt.verify(token, process.env.JWT_KEY)
             try {
-             User.find({ _id:data._id, 'tokens.token': token },(error,user)=>{
+                //query the database
+             User.findOne({ _id:data._id, 'tokens.token': token },(error,user)=>{
             if (error) {
                 throw new Error()
             }
+            //sending response according to the schema in user.model.js 
             res.status(200).send({fullName:user.fullName,email:user.email,gender:user.gender,city:user.city});
             next()});
           
         } catch (error) {
-            res.status(401).send({ error: 'Details not found' });
+            res.status(404).send({ error: 'Details not found' });
            
         }
     }
