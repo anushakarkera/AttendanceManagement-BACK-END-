@@ -1,6 +1,6 @@
 user{
     _id:
-     fullName:
+    fullName:
     email: 
     password:
     phone:
@@ -14,19 +14,19 @@ user{
 
 class{
     _id:
-    Name:
-    RoomNumber:
+    name:
+    roomNumber:
 }
 
 subject{
     _id:
-    Name:
+    name:
 }
 
 classSubject{
     _id:
     class_id:
-    subjevt_id:
+    subject_id:
 }
 
 student{
@@ -55,4 +55,17 @@ userTimeTable{
         {classSubject_id:   ,time:   },
         ..............................
     }]
+}
+
+attendanceLog{
+    _id:
+    classSubject_id:
+    user_id:
+    time:    
+}
+
+absentLog{
+    _id:
+    attendanceLog_id:
+    student_id:[]
 }
