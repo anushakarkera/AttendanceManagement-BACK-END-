@@ -21,12 +21,15 @@ var userSchema = new mongoose.Schema({
     },
     phone: {
         type: String,
+        required : true
     },
     gender: {
         type: String,
+        required : true
     },
     city: {
         type: String,
+        required : true
     },
     saltSecret: String,
     tokens: [{
@@ -78,4 +81,4 @@ userSchema.statics.findByCredentials = async (email, password) => {
     return user
 }
 
-const User = mongoose.model('User', userSchema)
+const User = mongoose.model('users', userSchema)
