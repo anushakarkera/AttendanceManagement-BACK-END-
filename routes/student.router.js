@@ -4,5 +4,5 @@ const ctrlStu = require('../controllers/student.controller');
 // const studentController = require('../controllers/student.controller')
 
 //student routing
-router.get('/studentlist',ctrlStu.student);
+router.get('/list',ctrlStu.student);
 module.exports = router
