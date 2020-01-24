@@ -7,29 +7,23 @@ const jwt = require('jsonwebtoken')
 var userSchema = new mongoose.Schema({
     fullName: {
         type: String,
-        required: true,
         trim: true
     },
     email: {
         type: String,
-        required: true,
         unique: true
     },
     password: {
-        type: String,
-        required: true
-    },
+        type: String
+        },
     phone: {
-        type: String,
-        required : true
+        type: String
     },
     gender: {
-        type: String,
-        required : true
+        type: String
     },
     city: {
-        type: String,
-        required : true
+        type: String
     },
     saltSecret: String,
     tokens: [{
@@ -81,4 +75,5 @@ userSchema.statics.findByCredentials = async (email, password) => {
     return user
 }
 
-const User = mongoose.model('users', userSchema)
+const User = mongoose.model('User', userSchema);
+module.exports  = User;
