@@ -26,6 +26,7 @@ var userSchema = new mongoose.Schema({
     city: {
         type: String
     },
+    
     tokens: [{
         token: {
             type: String,
