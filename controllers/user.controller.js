@@ -57,24 +57,36 @@ module.exports.signup = (req,res,next) =>{
     });
 }
 
-module.exports.profile= (req,res,next)=>{
-    //extract payload
-    const token = req.header('Authorization').replace('Bearer ', '')
-    //retrieve data
-    const data = jwt.verify(token, process.env.JWT_KEY)
-            try {
-                //query the database
-             User.findOne({ _id:data._id, 'tokens.token': token },(error,user)=>{
-            if (error) {
-                throw new Error()
-            }
-            //sending response according to the schema in user.model.js 
-            res.status(200).send({fullName:user.fullName,email:user.email,gender:user.gender,city:user.city});
-            next()});
-          
-        } catch (error) {
-            res.status(404).send({ error: 'Details not found' });
-           
+module.exports.profile=async (req,res,next)=>{
+   
+    try{
+
+    let queryResult = await User.findOne({ _id:req.params.id });
+    
+    var doc={
+        fulName:queryResult.fullName ,
+        email:queryResult.email ,
+        phone:queryResult.phone ,
+        gender:queryResult.gender ,
+        city:queryResult.city
+    }
+
+    var result={}
+
+        result.responseCode = 200;
+        result.status = "OK";
+        result.message = "Successful"
+        result.data = doc;
+        res.send(result);
+
+    }catch (err) {
+
+        var error = {};
+             error.code = 404;
+             error.status = 'Not Found';
+             error.message = 'User details not existing';
+              res.send(error);
+                   
         }
     }
     
