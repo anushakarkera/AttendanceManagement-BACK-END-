@@ -1,5 +1,5 @@
 const User = require('mongoose').model('User')
-
+const Response = require('../response');
 
 
 module.exports.login = async(req, res) => {
@@ -15,7 +15,10 @@ module.exports.login = async(req, res) => {
         res.status(200).json({ok:true,_id:user.id,token:token});
         //res.send(a);
     } catch (error) {
-        res.status(400).send(error)
+        let r = new Response(res);
+        r.setCode(400).setError('Incorrect Email or Pass').setMessage('Incorrect email or Pass');
+        r.setStatus('unknown').send();
+        // res.status(400).send(error)
     }
 
 }
