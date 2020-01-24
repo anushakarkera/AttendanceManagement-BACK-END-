@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+// const Math = require('')
 
 var userSchema = new mongoose.Schema({
     fullName: {
@@ -25,7 +26,6 @@ var userSchema = new mongoose.Schema({
     city: {
         type: String
     },
-    saltSecret: String,
     tokens: [{
         token: {
             type: String,
@@ -37,23 +37,10 @@ userSchema.pre('save', async function (next) {
     // Hash the password before saving the user model
     const user = this
     if (user.isModified('password')) {
-        user.password = await bcrypt.hash(user.password, 8)
+        user.password = await bcrypt.hash(user.password, Math.random())
     }
     next()
 })
-
-userSchema.pre('save', function (next) {
-
-    if(this.saltSecret === undefined){
-        bcrypt.genSalt(10, (err, salt) => {
-            bcrypt.hash(this.password, salt, (err, hash) => {
-                this.password = hash;
-                this.saltSecret = salt;
-                next();
-            });
-        });
-    }
-});
 
 userSchema.methods.generateAuthToken = async function() {
     const user = this
