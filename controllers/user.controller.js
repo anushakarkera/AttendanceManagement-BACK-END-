@@ -1,12 +1,9 @@
-<<<<<<< HEAD
 const User = require('../models/user.model');
 
 const Handler = require('./handler');
-=======
-const User = require('mongoose').model('User')
-const Response = require('../response');
+// const User = require('mongoose').model('User')
+// const Response = require('../response');
 
->>>>>>> a299d2eec06e376a7258d1dfed0da6f98632b2a9
 
 module.exports.login = async(req, res) => {
     //Login a registered user
@@ -21,14 +18,11 @@ module.exports.login = async(req, res) => {
         var doc = { ok : true , _id : user._id, token : token };
         Handler.resultHandler(200, "OK", "Successful Login", doc, res);//res.status(200).json({ok:true,_id:user.id,token:token});
     } catch (error) {
-<<<<<<< HEAD
         Handler.resultHandler(400, "Error", "Login Failed!!! Username or Password is Incorrect.", "error", res);//res.status(400).send(error);
-=======
-        let r = new Response(res);
-        r.setCode(400).setError('Incorrect Email or Pass').setMessage('Incorrect email or Pass');
-        r.setStatus('unknown').send();
+        // let r = new Response(res);
+        // r.setCode(400).setError('Incorrect Email or Pass').setMessage('Incorrect email or Pass');
+        // r.setStatus('unknown').send();
         // res.status(400).send(error)
->>>>>>> a299d2eec06e376a7258d1dfed0da6f98632b2a9
     }
 
 }
