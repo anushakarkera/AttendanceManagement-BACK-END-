@@ -55,3 +55,34 @@ module.exports.signup = (req,res,next) =>{
         }
     });
 }
+module.exports.profileupdate=(req,res,next)=>{
+   // const token=req.header('Authorization').replace('Bearer','')
+    //const data=jwt.verify(token,process.env.JWT_KEY)
+    var bodyinput={}
+     for (var key in req.body){
+        if(req.body.hasOwnProperty(key)){
+            bodyinput[key]=req.body[key]
+        }
+    }
+    var update={$set:bodyinput};
+    User.findOneAndUpdate(
+            {_id:req.params.id},update,
+                    function(error,resp)
+                    {
+                        if (!error)
+                        {
+                            var result = {}
+                            result.responseCode = 200;
+                            result.status = "OK";
+                            result.message = "Successfully Updated"
+                            res.send(result);
+                        }
+                        else{
+                                var error = {};
+                                error.code = 422;
+                                error.status = 'Unprocessable Entity';
+                                error.message = 'Update failed';
+                                res.send(error);
+                            }
+                    });
+    }
