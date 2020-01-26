@@ -37,6 +37,11 @@ let defaultResponse = {
     409 : {
         Message : 'User Already Exist',
         Error   : 'Email Conflict : User Registration Unsuccessful'
+    },
+
+    422 : {
+        Message : 'Update Failed',
+        Error : 'Unprocessable Entity'
     }
 }
 
