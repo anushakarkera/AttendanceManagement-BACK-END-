@@ -47,28 +47,12 @@ module.exports.profileupdate=(req,res,next)=>{
     User.findOneAndUpdate(
             {_id:req.params.id},update,
                     function(error,resp)
-                    {   
-                        //code isn't tested, if it doesnt work revert it back
+                    {   //code isn't tested, if it doesnt work revert it back
                         if(!error)  
                             new Response(200)
                                 .setMessage('Successfully Updated')
                                 .send(res);
-                        
-                        else    new Response(422).send(res); //Data to be sent is defined in '../response.js'
-                        // if (!error)
-                        // {
-                        //     var result = {}
-                        //     result.responseCode = 200;
-                        //     result.status = "OK";
-                        //     result.message = "Successfully Updated"
-                        //     res.send(result);
-                        // }
-                        // else{
-                        //         var error = {};
-                        //         error.code = 422;
-                        //         error.status = 'Unprocessable Entity';
-                        //         error.message = 'Update failed';
-                        //         res.send(error);
-                        //     }
+                        else    
+                            new Response(422).send(res); //Data to be sent is defined in '../response.js'
                     });
     }
