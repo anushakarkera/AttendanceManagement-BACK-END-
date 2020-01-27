@@ -1,10 +1,8 @@
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
 const Handler = require('./handler');
-// const User = require('mongoose').model('User')
 const Response = require('../response');
-
 
 module.exports.login = async(req, res) => {
     try {
@@ -19,12 +17,11 @@ module.exports.login = async(req, res) => {
     } catch (error) {
        new Response(401).send(res);
     }
-
 }
 
 module.exports.signup = (req,res,next) =>{
     var user = new User();
-    Object.assign(user,req.body);   // assigns data from req.body to user model
+    Object.assign(user,req.body);
     user.save((err, doc) => {
         if (!err) 
             new Response(200)
@@ -53,3 +50,6 @@ module.exports.profileupdate=async (req,res,next)=>{
                     });
 }
 
+module.exports.timeTable = async (req,res) => {
+    
+}
