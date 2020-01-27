@@ -10,4 +10,6 @@ router.post('/login',userController.login);
 router.post('/signup',userController.signup);
 router.put('/profileupdate/:id',auth,userController.profileupdate)
 
-module.exports = router
+router.get('/profile/:id',userController.profile);
+
+module.exports = router;

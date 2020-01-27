@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken')
 const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
 const Handler = require('./handler');
@@ -43,10 +44,10 @@ module.exports.profileupdate=async (req,res,next)=>{
             {_id:req.params.id},update,
                     function(error,resp)
                     {   //code isn't tested, if it doesnt work revert it back
-                        if(!error)  
+                        if(!error)  {
                             new Response(200)
                                 .setMessage('Successfully Updated')
-                                .send(res);
+                                .send(res);}
                         else    
                             new Response(422).send(res); //Data to be sent is defined in '../response.js'
                     });
