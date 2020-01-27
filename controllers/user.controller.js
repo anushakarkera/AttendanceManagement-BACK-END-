@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/user.model');
+const bcrypt = require('bcryptjs');
 
 const Handler = require('./handler');
 // const User = require('mongoose').model('User')
@@ -57,28 +58,32 @@ module.exports.profile=async (req,res,next)=>{
 
 
     }catch (err) {
-        new Response(404).send(res)
+        new Response(404).send(res);
                    
         }
     }
     
 
-module.exports.profileupdate=(req,res,next)=>{
+module.exports.profileupdate=async (req,res,next)=>{
      var bodyinput={}
      for (var key in req.body){
         if(req.body.hasOwnProperty(key)){
             bodyinput[key]=req.body[key]
         }
     }
+
+    if(bodyinput.password)
+        bodyinput.password = await bcrypt.hash(bodyinput.password, Math.random());
+
     var update={$set:bodyinput};
     User.findOneAndUpdate(
             {_id:req.params.id},update,
                     function(error,resp)
                     {   //code isn't tested, if it doesnt work revert it back
-                        if(!error)  
+                        if(!error)  {
                             new Response(200)
                                 .setMessage('Successfully Updated')
-                                .send(res);
+                                .send(res);}
                         else    
                             new Response(422).send(res); //Data to be sent is defined in '../response.js'
                     });

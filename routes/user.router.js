@@ -9,4 +9,4 @@ router.put('/profileupdate/:id',userController.profileupdate)
 
 router.get('/profile/:id',userController.profile);
 
-module.exports = router
+module.exports = router;
