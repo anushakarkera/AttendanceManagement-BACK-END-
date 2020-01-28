@@ -53,7 +53,7 @@ module.exports.profile= async (req,res,next)=>{
     }
 
 
-module.exports.profileupdate=async (req,res,next)=>{
+module.exports.profileUpdate=async (req,res,next)=>{
     var bodyinput = req.body;
     if(bodyinput['password'])
         bodyinput['password'] = await bcrypt.hash(bodyinput['password'],Math.random())
