@@ -26,6 +26,30 @@ module.exports.signup = (req,res,next) =>{
             });
 }
 
+
+module.exports.profile= async (req,res,next)=>{
+    try{
+        const result=await User.findOne({_id:req.params.id});
+        var doc={};
+            doc.fullName=result.fullName;
+            doc.email=result.email;
+            doc.phone=result.phone;
+            doc.gender=result.gender;
+            doc.city=result.city;
+        
+        new Response(200)
+            .setMessage('Succesful')
+            .setData(doc)
+            .send(res);
+
+        }
+        catch(err){
+            new Response(404).send(res);
+        }
+        
+    }
+
+
 module.exports.profileupdate=async (req,res,next)=>{
     var bodyinput = req.body;
     if(bodyinput['password'])
