@@ -1,20 +1,19 @@
 module.exports = class Response{
     constructor(resCode){
-    	let res = {Status : 'SUCCESS'};
-
-        this.setMessage = (msg)  => { res.Message = msg;    return this;    }
-        this.setData    = (data) => { res.Data = data;      return this; 	}
-        this.setError   = (err)  => { res.Error = err;      return this; 	}
+    	let res = {};
+        this.setStatus  = (sts)  => { res.status =sts;      return this;    }
+        this.setMessage = (msg)  => { res.message = msg;    return this;    }
+        this.setData    = (data) => { res.data = data;      return this; 	}
+        this.setError   = (err)  => { res.error = err;      return this; 	}
         
         this.send = (resObj) => {
-            if(resCode === 200)
+            if(Object.keys(res).length)
                 resObj.status(resCode).send(res);
             else{
-                res.Status = 'FAILED';
                 if(defaultResponse[resCode] === undefined)
                     resObj.status(404).send(defaultResponse[404]);
                 else
-                    resObj.status(resCode).send(Object.assign(res,defaultResponse[resCode]));
+                    resObj.status(resCode).send(defaultResponse[resCode]);
             }
         }
     }
@@ -24,24 +23,22 @@ module.exports = class Response{
 -- add negative response here using response code as a key --
 */
 let defaultResponse = {
+    200 :  {},
+    201 :  {},
+
     404 :  {
-        Message : 'Unknown Request',
-        Error  : 'Default Response Not Defined'
+        error  : 'Default Response Not Defined'
     },
 
     401 : {
-        Message : 'Incorrect Email or Password',
-        Error   : 'Incorrect Credential : User Authentication Unsuccessful'
     },
 
     409 : {
-        Message : 'User Already Exist',
-        Error   : 'Email Conflict : User Registration Unsuccessful'
+        error   : 'Email Conflict'
     },
 
     422 : {
-        Message : 'Update Failed',
-        Error : 'Unprocessable Entity'
+        error : 'Unprocessable Entity : Update Failed'
     }
 }
 
