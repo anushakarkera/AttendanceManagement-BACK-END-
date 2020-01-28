@@ -1,23 +1,10 @@
 //student schema
 const mongoose = require('mongoose');
 
-var studentSchema = new mongoose.Schema({
-
-    fullname: {
-        type: String
-    },
-    gender: {
-        type: String
-       
-    },
-    email: {
-        type: String,
-        unique: true
-     },
-    phone: {
-        type: String
-        
-    }
-    
-})
-module.exports=mongoose.model('Student',studentSchema);
+module.exports=mongoose.model('Student',new mongoose.Schema({
+    fullname: String,
+    gender  : String,
+    email   : { type: String,   unique: true    },
+    phone   : String,
+    class_id : mongoose.Schema.Types.ObjectId
+}));
