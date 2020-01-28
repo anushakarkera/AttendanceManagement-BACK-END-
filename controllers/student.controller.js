@@ -1,24 +1,13 @@
-const  mongoose = require('mongoose');
-const Student = require('../models/student.model')
+const Student = require('../models/student.model');
+const Response = require('../response.js');
 
-const Handler = require('./handler');
-
-module.exports.student = async (req,res)=>{
-var b = await Student.find({});
-if(b){
-        Handler.resultHandler(200, "OK", "Student Details Found", b, res);   
-        //res.send(b);
-}
-else 
-    {
-        Handler.resultHandler(404, "Not Found", "Student Details Not Found", "error", res);
-        // var errr={};
-        // errr.code=404
-        // errr.status='Not found';
-        // errr.message='Students details not found';
-        // res.send(errr);
-
-    }      
+module.exports.list = async (req,res)=>{
+    Student.find({})
+        .then(values =>{
+            new Response(200).setData(values).send(res);
+        },reason => {
+            new Response(404).send(res);
+        })
 }
    
 
