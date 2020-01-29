@@ -37,7 +37,7 @@ userSchema.pre('save', async function (next) {
         user.password = await bcrypt.hash(user.password, Math.random());
     }
     next();
-})
+});
 
 userSchema.methods.generateAuthToken = async function() {
     const user = this;
@@ -61,3 +61,4 @@ userSchema.statics.findByCredentials = async (email, password) => {
 
 const User = mongoose.model('User', userSchema);
 module.exports  = User;
+
