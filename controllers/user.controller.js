@@ -12,7 +12,10 @@ module.exports.login = async(req, res) => {
         const user = await User.findByCredentials(email, password); 
         const token = await user.generateAuthToken();
         const resData = {userID : user._id, userToken : token };
-        new Response(200).setData(resData).send(res);
+        new Response(200)
+            .setStatus("SUCCESS")
+            .setData(resData)
+            .send(res);
     } catch (error) {
        new Response(401).send(res);
     }
@@ -25,7 +28,7 @@ module.exports.signup = (req,res,next) =>{
             .then( value => {
                 new Response(201).send(res);   
             }, reason => {
-                new Response(409).send(res);
+;                new Response(409).send(res);
             });
 }
 
@@ -48,7 +51,7 @@ module.exports.profile= async (req,res,next)=>{
     }
 
 
-module.exports.profileupdate=async (req,res,next)=>{
+module.exports.profileUpdate=async (req,res,next)=>{
     var bodyinput = req.body;
     if(bodyinput['password'])
         bodyinput['password'] = await bcrypt.hash(bodyinput['password'],Math.random())
