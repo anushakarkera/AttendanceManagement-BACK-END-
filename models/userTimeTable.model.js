@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const ObjectID = mongoose.Schema.Types.ObjectId;
 
 const timeTable = new mongoose.Schema({
-    classSubject_id : ObjectID,
+    classSubject_id : { type : ObjectID , ref : 'classsubjects' },
     time : String
 });
 
