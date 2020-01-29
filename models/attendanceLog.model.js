@@ -6,3 +6,4 @@ module.exports=mongoose.model('attendanceLog',new mongoose.Schema({
     user_id:    ObjectID,
     time: String  
 }));
+
