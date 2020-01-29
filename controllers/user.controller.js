@@ -37,7 +37,6 @@ module.exports.profileupdate=async (req,res,next)=>{
             new Response(422).send(res);
         });
 }
-
 module.exports.timeTable = async (req,res) => {
     
 }

@@ -6,5 +6,4 @@ router.post('/login',userController.login);
 router.post('/signup',userController.signup);
 router.put('/profileupdate/:id',auth,userController.profileupdate);
 router.get('/timeTable/:user_id',userController.timeTable);
-
 module.exports = router;
