@@ -7,4 +7,7 @@ router.post('/signup',userController.signup);
 router.put('/profileupdate/:id',auth,userController.profileupdate);
 router.get('/timeTable/:user_id',userController.timeTable);
 router.get('/profile/:id',userController.profile);
+router.get('/forgotpassword/:email',userController.forgotPassword);
+router.put('/newpassword/:id',userController.newPassword);
+
 module.exports = router;

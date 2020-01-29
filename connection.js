@@ -15,6 +15,7 @@ require('./models/classSubject.model')
 require('./models/student.model')
 require('./models/subject.model')
 require('./models/userTimeTable.model')
+require('./models/otp.model')
 
 module.exports.connectDB = () => {
     mongoose.connect( process.env.DB_URL,(err) =>{
