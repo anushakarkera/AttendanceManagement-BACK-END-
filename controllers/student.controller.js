@@ -7,11 +7,11 @@ const Response = require('../response.js');
 
 module.exports.list = async (req,res)=>{
     await classSubject.findOne({_id : req.query.id}).then(values => {
-
-        var arraylist = [];
         Student.find({class_id : values.class_id})
         .then(value =>{
-               res.send(value);
+                var list = [];
+               (value.forEach(element => { list.push(element.fullName) }));
+               res.send(list);
            },reason => {
                new Response(404).send(res);
            });        

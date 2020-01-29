@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
+const UserTT = require('../models/userTimeTable.model');
 const bcrypt = require('bcryptjs');
 const Response = require('../response');
 
@@ -63,5 +64,10 @@ module.exports.profileupdate=async (req,res,next)=>{
 }
 
 module.exports.timeTable = async (req,res) => {
+    await UserTT.findOne({ _id : req.query.user_id }).then(result => {
+        res.send(result);
+    }, error => {
+        res.send('Error');
+    });
 
 }
