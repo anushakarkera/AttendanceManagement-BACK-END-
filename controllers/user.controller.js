@@ -8,7 +8,7 @@ module.exports.login = async(req, res) => {
         const { email, password } = req.body;
         const user = await User.findByCredentials(email, password); 
         const token = await user.generateAuthToken();
-        const resData = {userID : user._id, userToken : token };
+        const resData =  {userToken : token };
         new Response(200).setData(resData).send(res);
     } catch (error) {
        new Response(401).send(res);
@@ -63,5 +63,5 @@ module.exports.profileupdate=async (req,res,next)=>{
 }
 
 module.exports.timeTable = async (req,res) => {
-    
+
 }
