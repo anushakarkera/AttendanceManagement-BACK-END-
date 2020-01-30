@@ -192,43 +192,47 @@ module.exports.newPassword= async(req,res,next)=>{
     
 }
 
-module.exports.timeTable = async (req,res) => {
-    await UserTT.findOne({user_id : req.userID}).then(result => {
-        var data = [];
-        var obj = {
-            // id :{type:String},
-            // no :{type : String},
-            // name: {type:String},
-            // sub : {type:String}
-        };
-        var oob = [];
-        const today  = new Date().getDay();
-        var weekDay = ['sun','mon','tue','wed','thr','fri','sat'];
-        var csids = [];
-        const currentTimeTable = result[weekDay[today-3]];
-        //data = currentTimeTable;
-        currentTimeTable.forEach(element => {
-            csids.push(element.classSubject_id);
-        });
-        //console.log(csids)
-        csids.forEach(val => {
-            ClassSubject.findOne({ _id : val }).then(allowd => {
-                    //console.log(allowd)
-                Class.findOne({ _id : allowd.class_id }).then(wished =>{
-                    obj.name = wished.name;
-                    obj.no = wished.roomNumber;
-                    obj.id = wished._id;
-                    if(wished){
-                        console.log(allowd.subject_id);
-                        Subject.findOne({ _id : allowd.subject_id});
-                    }
+module.exports.timeTable = async (req, res) => {
 
-                },unwished=>{res.send('errrrrrr')});
+    await UserTT.findOne({ user_id : req.userID }).then(result => {
+        var data = [];
+        var i = 0;
+        const weekDay = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
+        const today  = new Date().getDay();
+       
+        
+        const currentTimeTable = result[weekDay[today-3]];
+
+        currentTimeTable.forEach(val => {
+
+            ClassSubject.findOne({ _id : val.classSubject_id }).then(allowd => {
+                    
+                Class.findOne({ _id : allowd.class_id }).then(wished =>{
+
+                    Subject.findOne({ _id : allowd.subject_id }).then(complete => {
+
+                        ++i;
+
+                        var obj = {};
+
+                        obj.classid = allowd._id;
+                        obj.classname = wished.name;
+                        obj.classnum = wished.roomNumber;
+                        obj.subname = complete.name;
+                        obj.timing = val.time;
+                        
+                        data.push(obj);
+
+                        if(currentTimeTable.length === i){res.send(data);}
+
+                    } , uncomplete => {res.send('Some errors')});
+
+                } , unwished=>{res.send('Some errors')});
                    
-            }, unallowed => {res.send("Big error")});
+            } , unallowed => {res.send("Some errors")});
+
         });
-         //console.log(oob);
-    }, error => {
-        res.send('Error');
-    });
+
+    } , error => {res.send('Error');});
+  
 }
