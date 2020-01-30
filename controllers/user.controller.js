@@ -145,6 +145,53 @@ module.exports.profileupdate=async (req,res,next)=>{
         });
 }
 
+module.exports.forgotPassword= async(req,res,next)=>{
+    var userEmail=req.params.email;
+        User.findOne({email:userEmail},{_id:true})
+            .then(val => {
+                const tempPass=randomString.generate({
+                    charset:userEmail
+                },reason=>{});
+                mail(userEmail,tempPass);
+                const filter={user_id:val._id}
+                const update={otp:tempPass}
+                 OTP.findOneAndUpdate(filter,update,{
+                    new:true,
+                    upsert:true
+        
+                }).then(value=>{
+                    new Response(200).setData({userId:val._id}).send(res);
+                },reason=>{
+                    new Response(404).send(res);
+                })
+        
+            })
+                  
+}
+
+
+
+module.exports.newPassword= async(req,res,next)=>{
+  
+    const value= await OTP.findOne({user_id:req.params.id},{otp:true})
+    if(value.otp === req.body.otp){
+            var newPass=req.body.password;
+            if(newPass)
+                newPass = await bcrypt.hash(newPass,Math.random())
+            User.findOneAndUpdate({_id:req.params.id},{password:newPass})
+            .then(value =>{
+                new Response(200).setData(newPass).send(res);
+            },reason => {
+                new Response(422).send(res);
+            });
+    } 
+    else{
+           new Response(400).setStatus('INVALID OTP').send(res);
+    }
+
+    
+}
+
 module.exports.timeTable = async (req,res) => {
     await UserTT.findOne({user_id : req.userID}).then(result => {
         var data = [];
