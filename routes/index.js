@@ -11,9 +11,9 @@ module.exports = router
 
 
 //future
-// const classRouter = require('./class.router')
+const classRouter = require('./class.router')
 
-// router.use('/class',classRouter)
+router.use('/class',classRouter)
 
 
 
