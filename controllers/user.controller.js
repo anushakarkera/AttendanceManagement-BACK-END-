@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
 const UserTT = require('../models/userTimeTable.model');
+const ClassSubject = require('../models/classSubject.model');
+const Subject = require('../models/subject.model');
+const Class = require('../models/class.model');
 const bcrypt = require('bcryptjs');
 const Response = require('../response');
 const mongoose = require('mongoose');
@@ -52,12 +55,7 @@ module.exports.profile= async (req,res,next)=>{
     }
 
 
-<<<<<<< HEAD
-module.exports.profileUpdate=async (req,res,next)=>{
-
-=======
 module.exports.profileupdate=async (req,res,next)=>{
->>>>>>> 0fb39c838b12f8ff8ac0d2ed36de138e49759b63
     var bodyinput = req.body;
     if(bodyinput['password'])
         bodyinput['password'] = await bcrypt.hash(bodyinput['password'],Math.random())
@@ -74,11 +72,45 @@ module.exports.profileupdate=async (req,res,next)=>{
 
 module.exports.timeTable = async (req,res) => {
     await UserTT.findOne({user_id : req.query.user_id}).then(result => {
+        var data = [];
+        var obj = {
+            id :{type:String},
+            no :{type : String},
+            name: {type:String},
+            sub : {type:String}
+        };
+        var oob =[obj];
         const today  = new Date().getDay();
         var weekDay = ['sun','mon','tue','wed','thr','fri','sat'];
         //console.log(weekDay[today]);
-        const currentTimeTable = result[weekDay[today]];
-        //console.log(currentTimeTable);
+        var csids = [];
+        const currentTimeTable = result[weekDay[today-3]];
+        data = currentTimeTable;
+        //console.log(data);
+        currentTimeTable.forEach(element => {
+            csids.push(element.classSubject_id);
+        });
+        //console.log(csids)
+        csids.forEach(val => {
+            ClassSubject.findOne({ _id : val }).then(allowd => {
+                    //console.log(allowd)
+                Class.findOne({ _id : allowd.class_id }).then(wished =>{
+                    // var classsubject = [{id :{type : String},classno : {type :String},classname : {type : String},subjectname : {type :String}}];
+                    obj.id = wished._id;
+                    //console.log(wished)
+                     obj.no = wished.roomNumber;
+                     obj.name = wished.name;
+                     Subject.findOne({ _id : allowd.subject_id }).then( nameofsub => {
+                         obj.sub = nameofsub.name;
+                         console.log(obj);
+                         oob.push(obj)
+                     } , errorsub => {res.send('tooooooo error')});
+
+                    
+                } , unwished => {res.send('bigbig error')});
+            }, unallowed => {res.send("Big error")});
+        });
+         console.log(oob);
     }, error => {
         res.send('Error');
     });
