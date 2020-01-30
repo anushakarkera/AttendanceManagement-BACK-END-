@@ -16,9 +16,9 @@ const auth = async(req, res, next) => {
             return true;
         }
     const token = req.header('Authorization').replace('Bearer ', '');
-    console.log(req.header('Authorization'))
+    //console.log(req.header('Authorization'))
     const data = jwt.verify(token, process.env.JWT_KEY);
-    console.log(data);
+    //console.log(data);
         const user = await User.findOne({ _id: data._id, token: token });
         if (!user) {
             throw new Error();
