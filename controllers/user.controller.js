@@ -55,11 +55,14 @@ module.exports.profileupdate=async (req,res,next)=>{
     var bodyinput = req.body;
     if(bodyinput['password'])
         bodyinput['password'] = await bcrypt.hash(bodyinput['password'],Math.random())
-    User.findOneAndUpdate({_id:req.params.id},{$set:bodyinput})
+    User.findOneAndUpdate({_id:req.userID},{$set:bodyinput})
         .then(value =>{
             new Response(200).send(res);
         },reason => {
-            new Response(422).send(res);
+            if(bodyinput['email'])
+                new Response(409).send(res)
+            else
+                new Response(422).send(res);
         });
 }
 
