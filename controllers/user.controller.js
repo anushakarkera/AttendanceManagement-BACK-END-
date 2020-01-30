@@ -83,8 +83,6 @@ module.exports.forgotPassword = async (req, res, next) => {
             }
 
 
-<<<<<<< HEAD
-=======
             OTP.findOneAndUpdate(searchFilter, dataToBeUpdated, {
                 new: true,
                 upsert: true
@@ -132,7 +130,6 @@ module.exports.newPassword = async (req, res, next) => {
 }
 
 
->>>>>>> 85a39bb90f659a974b963b7192c531fbe0061760
 module.exports.profileupdate=async (req,res,next)=>{
     var bodyinput = req.body;
     if (bodyinput['password'])
@@ -149,23 +146,20 @@ module.exports.profileupdate=async (req,res,next)=>{
 }
 
 module.exports.timeTable = async (req,res) => {
-    await UserTT.findOne({user_id : req.query.user_id}).then(result => {
+    await UserTT.findOne({user_id : req.userID}).then(result => {
         var data = [];
         var obj = {
-            id :{type:String},
-            no :{type : String},
-            name: {type:String},
-            sub : {type:String}
+            // id :{type:String},
+            // no :{type : String},
+            // name: {type:String},
+            // sub : {type:String}
         };
-        var oob =[obj];
+        var oob = [];
         const today  = new Date().getDay();
         var weekDay = ['sun','mon','tue','wed','thr','fri','sat'];
-<<<<<<< HEAD
-        //console.log(weekDay[today]);
         var csids = [];
         const currentTimeTable = result[weekDay[today-3]];
-        data = currentTimeTable;
-        //console.log(data);
+        //data = currentTimeTable;
         currentTimeTable.forEach(element => {
             csids.push(element.classSubject_id);
         });
@@ -174,26 +168,19 @@ module.exports.timeTable = async (req,res) => {
             ClassSubject.findOne({ _id : val }).then(allowd => {
                     //console.log(allowd)
                 Class.findOne({ _id : allowd.class_id }).then(wished =>{
-                    // var classsubject = [{id :{type : String},classno : {type :String},classname : {type : String},subjectname : {type :String}}];
+                    obj.name = wished.name;
+                    obj.no = wished.roomNumber;
                     obj.id = wished._id;
-                    //console.log(wished)
-                     obj.no = wished.roomNumber;
-                     obj.name = wished.name;
-                     Subject.findOne({ _id : allowd.subject_id }).then( nameofsub => {
-                         obj.sub = nameofsub.name;
-                         console.log(obj);
-                         oob.push(obj)
-                     } , errorsub => {res.send('tooooooo error')});
+                    if(wished){
+                        console.log(allowd.subject_id);
+                        Subject.findOne({ _id : allowd.subject_id});
+                    }
 
-                    
-                } , unwished => {res.send('bigbig error')});
+                },unwished=>{res.send('errrrrrr')});
+                   
             }, unallowed => {res.send("Big error")});
         });
-         console.log(oob);
-=======
-        const currentTimeTable = result[weekDay[today]];
-        console.log(currentTimeTable);
->>>>>>> 85a39bb90f659a974b963b7192c531fbe0061760
+         //console.log(oob);
     }, error => {
         res.send('Error');
     });
