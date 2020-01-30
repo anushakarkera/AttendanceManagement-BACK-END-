@@ -50,12 +50,13 @@ module.exports.profileUpdate=async (req,res,next)=>{
     User.findOneAndUpdate({ _id: req.userID }, { $set: bodyinput })
         .then(value => {
             new Response(200).send(res);
-        }, reason => {
+        })
+        .catch(err => {
             if (bodyinput['email'])
                 new Response(409).send(res)
             else
                 new Response(422).send(res);
-        });
+        })
 }
 
 module.exports.forgotPassword = async (req, res, next) => {
