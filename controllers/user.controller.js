@@ -67,7 +67,6 @@ module.exports.forgotPassword = async (req, res, next) => {
     User.findOne({ email: userEmail }, { email: true })
         .then(retrievedValue => {
             if (!retrievedValue) throw ('email not found')
-            console.log(retrievedValue)
             const temporaryPassword = randomString.generate({
                 charset: userEmail
             }, reason => { });
@@ -96,7 +95,7 @@ module.exports.forgotPassword = async (req, res, next) => {
             new Response(409).send(res);
         })
         .catch(err => {
-            console.log(err)
+           // console.log(err)
             new Response(409).send(res);
         })
 
