@@ -13,6 +13,7 @@ const bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
 app.use(cors());
+app.use(require('./middleware/auth'))
 
 //will automatically search for index.js in './routes' folder
 app.use(require('./routes'));

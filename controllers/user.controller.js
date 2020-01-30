@@ -35,11 +35,11 @@ module.exports.signup = (req,res,next) =>{
 
 module.exports.profile= async (req,res,next)=>{
     try{
-            const result=await User.findOne({_id:req.params.id},{_id:false,_v:false,password:false,token:false});
+            const userDetails=await User.findOne({_id:req.userID},{_id:false,__v:false,password:false,token:false});
                     
             new Response(200)
                 .setStatus('SUCCESS')
-                .setData(result)
+                .setData(userDetails)
                 .send(res);
 
         }
@@ -64,25 +64,36 @@ module.exports.profileUpdate=async (req,res,next)=>{
 }
 
 module.exports.forgotPassword= async(req,res,next)=>{
-    var userEmail=req.params.email;
+    var userEmail=req.body.email;
+    console.log(req.headers.host);
         User.findOne({email:userEmail},{_id:true})
-            .then(val => {
-                const tempPass=randomString.generate({
+            .then(retrievedValue => {
+                const temporaryPassword =randomString.generate({
                     charset:userEmail
                 },reason=>{});
-                mail(userEmail,tempPass);
-                const filter={user_id:val._id}
-                const update={otp:tempPass}
-                 OTP.findOneAndUpdate(filter,update,{
+                mail(userEmail,temporaryPassword);
+                
+                if(retrievedValue){
+
+
+                const searchFilter = {user_id:retrievedValue._id}
+                const dataToBeUpdated =  {
+                    otp:temporaryPassword,
+                    expireAt:Date.now()}
+
+
+                 OTP.findOneAndUpdate(searchFilter,dataToBeUpdated,{
                     new:true,
                     upsert:true
         
                 }).then(value=>{
-                    new Response(200).setData({userId:val._id}).send(res);
+                    new Response(200).setData({userId:retrievedValue._id}).send(res);
                 },reason=>{
                     new Response(404).send(res);
                 })
-        
+            }
+            else
+            new Response(409).send(res);
             })
                   
 }
@@ -91,14 +102,14 @@ module.exports.forgotPassword= async(req,res,next)=>{
 
 module.exports.newPassword= async(req,res,next)=>{
   
-    const value= await OTP.findOne({user_id:req.params.id},{otp:true})
-    if(value.otp === req.body.otp){
-            var newPass=req.body.password;
-            if(newPass)
-                newPass = await bcrypt.hash(newPass,Math.random())
-            User.findOneAndUpdate({_id:req.params.id},{password:newPass})
+    const existingOTP= await OTP.findOne({user_id:req.body.userID},{otp:true})
+    if(existingOTP &&  (existingOTP.otp === req.body.otp)){
+            var recievedPassword=req.body.password;
+            if(recievedPassword)
+                recievedPassword = await bcrypt.hash(recievedPassword,Math.random())
+            User.findOneAndUpdate({_id:req.params.id},{password:recievedPassword})
             .then(value =>{
-                new Response(200).setData(newPass).send(res);
+                new Response(200).setData(recievedPassword).send(res);
             },reason => {
                 new Response(422).send(res);
             });
