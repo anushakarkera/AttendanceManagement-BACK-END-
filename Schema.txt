@@ -67,5 +67,5 @@ attendanceLog{
 absentLog{
     _id:
     attendanceLog_id:
-    student_id:[]
+    student_id:
 }

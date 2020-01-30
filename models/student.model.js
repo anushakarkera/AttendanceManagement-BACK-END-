@@ -8,3 +8,4 @@ module.exports=mongoose.model('Student',new mongoose.Schema({
     phone   : String,
     class_id : mongoose.Schema.Types.ObjectId
 }));
+

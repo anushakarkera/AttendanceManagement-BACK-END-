@@ -4,8 +4,10 @@ const userController = require('../controllers/user.controller')
 
 router.post('/login',userController.login);
 router.post('/signup',userController.signup);
-router.put('/profileupdate/:id',userController.profileupdate);
+router.put('/profileUpdate/:id',auth,userController.profileUpdate);
 router.get('/timeTable/:user_id',userController.timeTable);
-router.post('/absentees',userController.absentees)
+router.get('/profile/:id',userController.profile);
+router.get('/forgotpassword/:email',userController.forgotPassword);
+router.put('/newpassword/:id',userController.newPassword);
 
 module.exports = router;
