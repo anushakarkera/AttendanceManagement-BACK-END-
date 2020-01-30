@@ -125,11 +125,10 @@ module.exports.newPassword = async (req, res, next) => {
     else {
         new Response(400).setStatus('INVALID OTP').send(res);
     }
-
-
 }
 
-module.exports.profileupdate = async (req, res, next) => {
+
+module.exports.profileupdate=async (req,res,next)=>{
     var bodyinput = req.body;
     if (bodyinput['password'])
         bodyinput['password'] = await bcrypt.hash(bodyinput['password'], Math.random())
@@ -144,10 +143,11 @@ module.exports.profileupdate = async (req, res, next) => {
         });
 }
 
-module.exports.timeTable = async (req, res) => {
-    await UserTT.findOne({ user_id: req.query.user_id }).then(result => {
-        const today = new Date().getDay();
-        var weekDay = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
+
+module.exports.timeTable = async (req,res) => {
+    await UserTT.findOne({user_id : req.query.user_id}).then(result => {
+        const today  = new Date().getDay();
+        var weekDay = ['sun','mon','tue','wed','thr','fri','sat'];
         //console.log(weekDay[today]);
         const currentTimeTable = result[weekDay[today]];
         //console.log(currentTimeTable);
