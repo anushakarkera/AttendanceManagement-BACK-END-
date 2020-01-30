@@ -1,26 +1,12 @@
 module.exports = class Response{
     constructor(resCode){
         let res = {code : resCode,status : 'SUCCESS'};
-        this.setStatus  = (sts)  => { res.status = sts;      return this;    }
-        this.setMessage = (msg)  => { res.message = msg;    return this;    }
-        this.setData    = (data) => { res.data = data;      return this; 	}
-        this.setError   = (err)  => { res.error = err;      return this; 	}
+        this.setData = (data) => { res.data = data;      return this; 	}
         this.send = (resObj) => {
             if(errorResponse[resCode] === undefined)
                 resObj.status(resCode).send(res)
-            else{
-                res.status = 'FAILED';
-                resObj.status(resCode).send(Object.assign(res,errorResponse[resCode]));
-            }
-                    
-
-            // if(Object.keys(res).length>2)
-            //     resObj.status(resCode).send(res);
-            // else{
-            //     if(errorResponse[resCode] === undefined)
-            //         resObj.status(404).send(errorResponse[404]);
-            //     else
-            //         resObj.status(resCode).send(errorResponse[resCode]);
+            else
+                resObj.status(resCode).send(Object.assign(res,{status : 'FAILED'},errorResponse[resCode]));
         }
     }
 }
@@ -29,54 +15,28 @@ module.exports = class Response{
 -- add negative response here using response code as a key --
 */
 let errorResponse = {
-    404 :  {
-        error  : 'Default Response Not Defined'
-    },
-
-    401 : {
-        message : 'Incorrect Credential'
-    },
-
-    409 : {
-        error   : 'Email Conflict'
-    },
-
-    422 : {
-        error : 'Unprocessable Entity : Update Failed'
-    }
+    404 : {error : 'Not Found'              },
+    400 : {error : 'Bad Request'            },
+    401 : {error : 'Unauthorized'           },
+    409 : {error : 'Conflict'               },
+    422 : {error : 'Unprocessable Entity'   }
 }
 
 /*
 -- Available Methods --
-setMessage()
 setData()
-setError()
 send(res)  //pass 'res' object 
 
 
 -- How to Use --
 
-Sending Successful Response       (pass 200 as response code)
-
-let response = new Response( responseCode );       
-response.setMessage('Response Message');
-response.setData (ResponseData);
-response.send(res);     
-
+Sending Successful Response 
+new Response(200).send(res);
         -OR-
-
-new Response( responseCode )                       
-    .setMessage('Response Message')
-    .setData (ResponseData)
-    .send(res);
+new Response(200).setData(resData).send(res);
 
 
+Sending unSuccessful response
+new Response( 400 ).send(res);
 
-Sending Negative Response   (pass a standard code as responseCode)
-
-    new Response( responseCode )
-        .send(res);
-
-Note : Define response content in defaultResponse { } (defined above)
-        
 */

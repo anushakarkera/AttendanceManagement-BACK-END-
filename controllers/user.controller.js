@@ -27,7 +27,8 @@ module.exports.signup = (req, res, next) => {
     user.save()
         .then(value => {
             new Response(201).send(res);
-        }, reason => {
+        })
+        .catch (err => {
             new Response(409).send(res);
         });
 }
@@ -35,12 +36,7 @@ module.exports.signup = (req, res, next) => {
 module.exports.profile = async (req, res, next) => {
     try {
         const userDetails = await User.findOne({ _id: req.userID }, { _id: false, __v: false, password: false, token: false });
-
-        new Response(200)
-            .setStatus('SUCCESS')
-            .setData(userDetails)
-            .send(res);
-
+        new Response(200).setData(userDetails).send(res);
     }
     catch (err) {
         new Response(404).send(res);
@@ -83,7 +79,7 @@ module.exports.forgotPassword = async (req, res, next) => {
                 upsert: true
 
             }).then(value => {
-                new Response(200).setStatus('SUCCESS').send(res);
+                new Response(200).send(res);
             }, reason => {
                 new Response(404).send(res);
             })
@@ -114,7 +110,7 @@ module.exports.newPassword = async (req, res, next) => {
             });
     }
     else {
-        new Response(400).setStatus('INVALID OTP').send(res);
+        new Response(400).send(res);
     }
 }
 
