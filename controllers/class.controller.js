@@ -35,20 +35,6 @@ module.exports.addAttendance = async (req,res,next) => {
         },reason => {
             console.log('something happend to attendance log lolololol0')
         })
-        /*var ids=req.body.id
-        User.find({_id:{$in:ids}},function(err, result) {
-            if (err) throw err;
-            console.log(result);
-            console.log(result._id)
-            var absentStudents=new Student()
-            Object.assign(absentStudents, result._id)
-            console.log(result._id)
-            absentStudents.save()
-            .then( value => {
-            new Response(201).send(res);   
-        }, reason => {
-            new Response(409).send(res);
-        })*/
     
 }
 module.exports.getAttendance = async (req,res) => {

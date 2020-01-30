@@ -2,10 +2,9 @@
 const mongoose = require('mongoose');
 
 module.exports=mongoose.model('Student',new mongoose.Schema({
-    fullname: String,
+    fullName: String,
     gender  : String,
     email   : { type: String,   unique: true    },
     phone   : String,
-    class_id : mongoose.Schema.Types.ObjectId
+    class_id :  { type : mongoose.Schema.Types.ObjectId , ref : 'class' }
 }));
-
