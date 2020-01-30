@@ -8,12 +8,12 @@ const timeTable = new mongoose.Schema({
 })
 
 module.exports=mongoose.model('userTimeTable',new mongoose.Schema({
-    user_id:    ObjectID,
-    mon:[{  timeTable }],
-    tue:[{  timeTable }],
-    wed:[{  timeTable }],
-    thr:[{  timeTable }],
-    fri:[{  timeTable }],
-    sat:[{  timeTable }]    
+    user_id : ObjectID,
+    mon :[ timeTable ],
+    tue :[ timeTable ],
+    wed :[ timeTable ],
+    thr :[ timeTable ],
+    fri :[ timeTable ],
+    sat :[ timeTable ]    
 }));
 
