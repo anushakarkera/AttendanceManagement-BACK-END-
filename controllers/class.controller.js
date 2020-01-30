@@ -10,6 +10,7 @@ const nexmo = new Nexmo({
     apiKey: NEXMO_API_KEY,
     apiSecret: NEXMO_API_SECRET
   })
+const Student = require('../models/student.model');
 
 module.exports.addAttendance = async (req,res,next) => {
     let data = req.body;
@@ -39,6 +40,9 @@ module.exports.addAttendance = async (req,res,next) => {
                 }, reason => {
                     new Response(409).send(res);
                 })
+                Student.find({_id:element.student_id},{phone:true},function(err, result) {
+                    if (err) throw err;
+                    let to=result[0].phone;
                 nexmo.message.sendSms(from, to, text, (err, responseData) => {
                     if (err) {
                         console.log(err);
@@ -51,6 +55,7 @@ module.exports.addAttendance = async (req,res,next) => {
                     }
                 })
                 
+            })   
         })
             console.log('saved')
         },reason => {
