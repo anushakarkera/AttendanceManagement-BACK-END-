@@ -83,8 +83,6 @@ module.exports.forgotPassword = async (req, res, next) => {
             }
 
 
-<<<<<<< HEAD
-=======
             OTP.findOneAndUpdate(searchFilter, dataToBeUpdated, {
                 new: true,
                 upsert: true
@@ -132,7 +130,6 @@ module.exports.newPassword = async (req, res, next) => {
 }
 
 
->>>>>>> 85a39bb90f659a974b963b7192c531fbe0061760
 module.exports.profileupdate=async (req,res,next)=>{
     var bodyinput = req.body;
     if (bodyinput['password'])
@@ -214,40 +211,8 @@ module.exports.timeTable = async (req,res) => {
         var oob =[obj];
         const today  = new Date().getDay();
         var weekDay = ['sun','mon','tue','wed','thr','fri','sat'];
-<<<<<<< HEAD
-        //console.log(weekDay[today]);
-        var csids = [];
-        const currentTimeTable = result[weekDay[today-3]];
-        data = currentTimeTable;
-        //console.log(data);
-        currentTimeTable.forEach(element => {
-            csids.push(element.classSubject_id);
-        });
-        //console.log(csids)
-        csids.forEach(val => {
-            ClassSubject.findOne({ _id : val }).then(allowd => {
-                    //console.log(allowd)
-                Class.findOne({ _id : allowd.class_id }).then(wished =>{
-                    // var classsubject = [{id :{type : String},classno : {type :String},classname : {type : String},subjectname : {type :String}}];
-                    obj.id = wished._id;
-                    //console.log(wished)
-                     obj.no = wished.roomNumber;
-                     obj.name = wished.name;
-                     Subject.findOne({ _id : allowd.subject_id }).then( nameofsub => {
-                         obj.sub = nameofsub.name;
-                         console.log(obj);
-                         oob.push(obj)
-                     } , errorsub => {res.send('tooooooo error')});
-
-                    
-                } , unwished => {res.send('bigbig error')});
-            }, unallowed => {res.send("Big error")});
-        });
-         console.log(oob);
-=======
         const currentTimeTable = result[weekDay[today]];
         console.log(currentTimeTable);
->>>>>>> 85a39bb90f659a974b963b7192c531fbe0061760
     }, error => {
         res.send('Error');
     });
