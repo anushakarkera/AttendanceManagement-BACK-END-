@@ -3,7 +3,8 @@ const User = require('../models/user.model');
 const UserTT = require('../models/userTimeTable.model');
 const bcrypt = require('bcryptjs');
 const Response = require('../response');
-
+const mongoose = require('mongoose');
+const mongodb = require('mongodb')
 module.exports.login = async(req, res) => {
     try {
         const { email, password } = req.body;
@@ -67,10 +68,22 @@ module.exports.profileupdate=async (req,res,next)=>{
 }
 
 module.exports.timeTable = async (req,res) => {
+<<<<<<< HEAD
     await UserTT.findOne({ _id : req.query.user_id }).then(result => {
         res.send(result);
     }, error => {
         res.send('Error');
     });
 
+=======
+    await UserTT.findOne({user_id : req.query.user_id}).then(result => {
+        const today  = new Date().getDay();
+        var weekDay = ['sun','mon','tue','wed','thr','fri','sat'];
+        //console.log(weekDay[today]);
+        const currentTimeTable = result[weekDay[today]];
+        //console.log(currentTimeTable);
+    }, error => {
+        res.send('Error');
+    });
+>>>>>>> 6405dd3563bb29c90dd3baf0aa77fe9387c87ae3
 }
