@@ -16,8 +16,8 @@ app.use(cors());
 app.use(require('./middleware/auth'))
 
 //will automatically search for index.js in './routes' folder
-app.use(require('./routes'));
+app.use(require('./routes'))
 
 var listener = app.listen(process.env.SERVER_PORT, function(){
-    console.log('Listening on port ' + listener.address().port);
+    console.log('Listening on port ' + listener.address().port)
 });

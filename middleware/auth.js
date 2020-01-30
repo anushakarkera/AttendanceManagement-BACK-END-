@@ -1,6 +1,6 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/user.model');
-const handler = require('../controllers/handler');
+const jwt = require('jsonwebtoken')
+const User = require('../models/user.model')
+const handler = require('../controllers/handler')
 const auth = async(req, res, next) => {
     try {
         
@@ -24,8 +24,8 @@ const auth = async(req, res, next) => {
     } catch (error) {
         //res.status(401).send({ error: 'Not authorized to access this resource' })
         //console.log('hello');
-        handler.resultHandler(401,'Error','Not authorized to access this resource','error',res);
+        handler.resultHandler(401,'Error','Not authorized to access this resource','error',res)
     }
 
 }
-module.exports = auth;
+module.exports = auth

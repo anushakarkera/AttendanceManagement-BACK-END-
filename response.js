@@ -1,21 +1,26 @@
 module.exports = class Response{
     constructor(resCode){
-    	let res = {code : resCode};
-        this.setStatus  = (sts)  => { res.status =sts;      return this;    }
+        let res = {code : resCode,status : 'SUCCESS'};
+        this.setStatus  = (sts)  => { res.status = sts;      return this;    }
         this.setMessage = (msg)  => { res.message = msg;    return this;    }
         this.setData    = (data) => { res.data = data;      return this; 	}
         this.setError   = (err)  => { res.error = err;      return this; 	}
-        
         this.send = (resObj) => {
-            if(Object.keys(res).length > 1){
-                resObj.status(resCode).send(res);
-            }
+            if(errorResponse[resCode] === undefined)
+                resObj.status(resCode).send(res)
             else{
-                if(defaultResponse[resCode] === undefined)
-                    resObj.status(404).send(defaultResponse[404]);
-                else
-                    resObj.status(resCode).send(Object.assign(res,defaultResponse[resCode]));
+                res.status = 'FAILED';
+                resObj.status(resCode).send(Object.assign(res,errorResponse[resCode]));
             }
+                    
+
+            // if(Object.keys(res).length>2)
+            //     resObj.status(resCode).send(res);
+            // else{
+            //     if(errorResponse[resCode] === undefined)
+            //         resObj.status(404).send(errorResponse[404]);
+            //     else
+            //         resObj.status(resCode).send(errorResponse[resCode]);
         }
     }
 }
@@ -23,30 +28,20 @@ module.exports = class Response{
 /*
 -- add negative response here using response code as a key --
 */
-let defaultResponse = {
-    200 :  {status:'SUCCESS'},
-
-    201 :  {
-        status : 'SUCCESS',
-        message : 'User Account Created'
-    },
-
+let errorResponse = {
     404 :  {
         error  : 'Default Response Not Defined'
     },
 
     401 : {
-        status : 'FAILED',
         message : 'Incorrect Credential'
     },
 
     409 : {
-        status : 'FAILED',
-        message : 'Email Conflict'
+        error   : 'Email Conflict'
     },
 
     422 : {
-        status : 'FAILED',
         error : 'Unprocessable Entity : Update Failed'
     }
 }
