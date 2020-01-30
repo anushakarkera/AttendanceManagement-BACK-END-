@@ -8,23 +8,29 @@ const jwt = require('jsonwebtoken');
 var userSchema = new mongoose.Schema({
     fullName: {
         type: String,
-        trim: true
+        trim: true,
+        required: "Full name cannot be empty"
     },
     email: {
         type: String,
-        unique: true
+        unique: true,
+        required: "Email cannot be empty"
     },
     password: {
-        type: String
+        type: String,
+        required: "Password cannot be empty"
         },
     phone: {
-        type: String
+        type: String,
+        required: "Phone cannot be empty"
     },
     gender: {
-        type: String
+        type: String,
+        required: "Gender cannot be empty"
     },
     city: {
-        type: String
+        type: String,
+        required: "City cannot be empty"
     },
     token:  {
         type: String
