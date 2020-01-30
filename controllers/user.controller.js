@@ -52,12 +52,7 @@ module.exports.profile= async (req,res,next)=>{
     }
 
 
-<<<<<<< HEAD
-module.exports.profileUpdate=async (req,res,next)=>{
-
-=======
 module.exports.profileupdate=async (req,res,next)=>{
->>>>>>> 0fb39c838b12f8ff8ac0d2ed36de138e49759b63
     var bodyinput = req.body;
     if(bodyinput['password'])
         bodyinput['password'] = await bcrypt.hash(bodyinput['password'],Math.random())
@@ -73,12 +68,11 @@ module.exports.profileupdate=async (req,res,next)=>{
 }
 
 module.exports.timeTable = async (req,res) => {
-    await UserTT.findOne({user_id : req.query.user_id}).then(result => {
+    await UserTT.findOne({user_id :req.userID}).then(result => {
         const today  = new Date().getDay();
         var weekDay = ['sun','mon','tue','wed','thr','fri','sat'];
-        //console.log(weekDay[today]);
         const currentTimeTable = result[weekDay[today]];
-        //console.log(currentTimeTable);
+        console.log(currentTimeTable);
     }, error => {
         res.send('Error');
     });
