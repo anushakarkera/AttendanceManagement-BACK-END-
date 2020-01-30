@@ -68,7 +68,12 @@ module.exports.profileupdate=async (req,res,next)=>{
 }
 
 module.exports.timeTable = async (req,res) => {
-    await UserTT.findOne({user_id :req.userID}).then(result => {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+    await UserTT.findOne({user_id : req.query.user_id}).then(result => {
+>>>>>>> c18debb30db386c91f0fd7590f1450b7f9661c8c
         const today  = new Date().getDay();
         var weekDay = ['sun','mon','tue','wed','thr','fri','sat'];
         const currentTimeTable = result[weekDay[today]];
@@ -76,4 +81,5 @@ module.exports.timeTable = async (req,res) => {
     }, error => {
         res.send('Error');
     });
+>>>>>>> 6405dd3563bb29c90dd3baf0aa77fe9387c87ae3
 }
