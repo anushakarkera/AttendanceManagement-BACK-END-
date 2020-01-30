@@ -3,10 +3,9 @@ const mongoose = require('mongoose');
 const ObjectID = mongoose.Schema.Types.ObjectId;
 
 const timeTable = new mongoose.Schema({
-    classSubject_id : ObjectID,
+    classSubject_id : { type : ObjectID , ref : 'classsubjects' },
     time : String
-});
-
+})
 
 module.exports=mongoose.model('userTimeTable',new mongoose.Schema({
     user_id:    ObjectID,

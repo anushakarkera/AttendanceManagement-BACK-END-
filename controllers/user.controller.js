@@ -1,21 +1,16 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
+const UserTT = require('../models/userTimeTable.model');
 const bcrypt = require('bcryptjs');
 const Response = require('../response');
-const mail=require('../middleware/mail');
-const randomString=require('randomstring');
-const OTP=require('../models/otp.model')
 
 module.exports.login = async(req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findByCredentials(email, password); 
         const token = await user.generateAuthToken();
-        const resData = {userID : user._id, userToken : token };
-        new Response(200)
-            .setStatus("SUCCESS")
-            .setData(resData)
-            .send(res);
+        const resData =  {userToken : token };
+        new Response(200).setData(resData).send(res);
     } catch (error) {
        new Response(401).send(res);
     }
@@ -28,30 +23,35 @@ module.exports.signup = (req,res,next) =>{
             .then( value => {
                 new Response(201).send(res);   
             }, reason => {
-;                new Response(409).send(res);
+                new Response(409).send(res);
             });
 }
 
 
 module.exports.profile= async (req,res,next)=>{
     try{
-            const result=await User.findOne({_id:req.params.id},{_id:false,_v:false,password:false,token:false});
-                    
-            new Response(200)
-                .setStatus('SUCCESS')
-                .setData(result)
-                .send(res);
+        const result=await User.findOne({_id:req.params.id});
+        var doc={};
+            doc.fullName=result.fullName;
+            doc.email=result.email;
+            doc.phone=result.phone;
+            doc.gender=result.gender;
+            doc.city=result.city;
+        
+        new Response(200)
+            .setMessage('Succesful')
+            .setData(doc)
+            .send(res);
 
         }
         catch(err){
-                 new Response(404).send(res);
+            new Response(404).send(res);
         }
-        
         
     }
 
 
-module.exports.profileUpdate=async (req,res,next)=>{
+module.exports.profileupdate=async (req,res,next)=>{
     var bodyinput = req.body;
     if(bodyinput['password'])
         bodyinput['password'] = await bcrypt.hash(bodyinput['password'],Math.random())
@@ -111,5 +111,10 @@ module.exports.newPassword= async(req,res,next)=>{
 }
 
 module.exports.timeTable = async (req,res) => {
-    
+    await UserTT.findOne({ _id : req.query.user_id }).then(result => {
+        res.send(result);
+    }, error => {
+        res.send('Error');
+    });
+
 }
