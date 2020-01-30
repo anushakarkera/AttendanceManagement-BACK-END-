@@ -8,7 +8,7 @@ mongoose.set('useUnifiedTopology', true);
 
 //Register schema to models here
 require('./models/user.model')
-require('./models/absentLog.model')
+//require('./models/absentLog.model')
 require('./models/attendanceLog.model')
 require('./models/class.model')
 require('./models/classSubject.model')
