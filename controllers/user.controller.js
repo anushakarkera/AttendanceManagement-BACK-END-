@@ -51,12 +51,7 @@ module.exports.profile= async (req,res,next)=>{
     }
 
 
-<<<<<<< HEAD
-module.exports.profileUpdate=async (req,res,next)=>{
-
-=======
 module.exports.profileupdate=async (req,res,next)=>{
->>>>>>> 0fb39c838b12f8ff8ac0d2ed36de138e49759b63
     var bodyinput = req.body;
     if(bodyinput['password'])
         bodyinput['password'] = await bcrypt.hash(bodyinput['password'],Math.random())
@@ -72,48 +67,10 @@ module.exports.profileupdate=async (req,res,next)=>{
 }
 
 module.exports.timeTable = async (req,res) => {
-<<<<<<< HEAD
-    
-}
-
-module.exports.absentees=(req,res)=>{
-    /*var absentStudents=new absentLog()
-    Object.assign(absentStudents, req.params)
-    absentStudents.save()
-    .then( value => {
-        new Response(201).send(res);   
-    }, reason => {
-        new Response(409).send(res);
-    });*/
-    /*var ids=req.body.id
-    User.find({_id:{$in:ids}},function(err, result) {
-        if (err) throw err;
-        console.log(result);
-        console.log(result._id)
-        var absentStudents=new Student()
-        Object.assign(absentStudents, result._id)
-        console.log(result._id)
-        absentStudents.save()
-        .then( value => {
-        new Response(201).send(res);   
-    }, reason => {
-        new Response(409).send(res);
-    })
-
-   /* twil.messages.create({
-        to:result.phone,
-        from:'',
-        body:'Student'+result.name+'is absent'
-    })
-    .then((message)=>console.log(message.sid))
-      });
-    })*/
-=======
     await UserTT.findOne({ _id : req.query.user_id }).then(result => {
         res.send(result);
     }, error => {
         res.send('Error');
     });
 
->>>>>>> 0fb39c838b12f8ff8ac0d2ed36de138e49759b63
 }
