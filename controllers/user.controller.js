@@ -72,8 +72,12 @@ module.exports.profileupdate=async (req,res,next)=>{
 }
 
 module.exports.timeTable = async (req,res) => {
-<<<<<<< HEAD
-    
+await UserTT.findOne({ _id : req.query.user_id }).then(result => {
+    res.send(result);
+}, error => {
+    res.send('Error');
+});
+
 }
 
 module.exports.absentees=(req,res)=>{
@@ -108,12 +112,5 @@ module.exports.absentees=(req,res)=>{
     .then((message)=>console.log(message.sid))
       });
     })*/
-=======
-    await UserTT.findOne({ _id : req.query.user_id }).then(result => {
-        res.send(result);
-    }, error => {
-        res.send('Error');
-    });
 
->>>>>>> 0fb39c838b12f8ff8ac0d2ed36de138e49759b63
 }
