@@ -7,13 +7,7 @@ router.use('/user',userRouter)
 const studentRouter = require('./student.router')
 router.use('/student',studentRouter)
 
-module.exports = router
-
-
-//future
 const classRouter = require('./class.router')
 router.use('/class',classRouter)
 
-
-
-
+module.exports = router
