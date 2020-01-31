@@ -17,7 +17,7 @@ require('./models/subject.model')
 require('./models/userTimeTable.model')
 
 module.exports.connectDB = () => {
-    mongoose.connect( process.env.DB_URL_LOCAL)
+    mongoose.connect( process.env.DB_URL)
         .then   (val => {   console.log('Connected to DB');     })
         .catch  (err => {   console.log('Not Connected to DB'); });
 }
