@@ -1,14 +1,21 @@
 const jwt = require('jsonwebtoken');
+
 const User = require('../models/user.model');
 const UserTT = require('../models/userTimeTable.model');
 const ClassSubject = require('../models/classSubject.model');
 const Subject = require('../models/subject.model');
 const Class = require('../models/class.model');
+
 const bcrypt = require('bcryptjs');
+
 const Response = require('../response');
+
 const randomString = require('randomstring');
+
 const mail = require('../middleware/mail');
-const OTP = require('../models/otp.model')
+
+const OTP = require('../models/otp.model');
+
 module.exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -137,24 +144,24 @@ module.exports.timeTable = async (req,res) => {
 
                         var obj = {};
 
-                        obj.classid = allowd._id;
-                        obj.classname = wished.name;
-                        obj.classnum = wished.roomNumber;
-                        obj.subname = complete.name;
-                        obj.timing = val.time;
+                        obj.classSubjectID = val.classSubject_id;
+                        obj.className = wished.name;
+                        obj.roomNumber = wished.roomNumber;
+                        obj.subjectName = complete.name;
+                        obj.time = val.time;
                         
                         data.push(obj);
 
-                        if(currentTimeTable.length === i){res.send(data);}
+                        if(currentTimeTable.length === i){ res.json(data); }
 
-                    } , uncomplete => {res.send('Some errors')});
+                    } , uncomplete => { new Response(404).send(res); });
 
-                } , unwished=>{res.send('Some errors')});
+                } , unwished=>{ new Response(404).send(res); });
                    
-            } , unallowed => {res.send("Some errors")});
+            } , unallowed => { new Response(404).send(res); });
 
         });
 
-    } , error => {res.send('Error');});
+    } , error => { new Response(404).send(res); });
   
 }
