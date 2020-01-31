@@ -36,7 +36,11 @@ module.exports.signup = (req, res, next) => {
             new Response(201).send(res);
         })
         .catch (err => {
-            new Response(409).send(res);
+            if(err.name==='ValidationError')
+                new Response(400).setError('Required Field Missing').send(res)
+            else    
+                new Response(409).send(res);
+        
         });
 }
 
