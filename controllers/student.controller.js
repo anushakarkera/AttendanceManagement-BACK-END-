@@ -6,7 +6,7 @@ const Response = require('../response.js');
 // const Mongoose = mongoose.Schema;
 
 module.exports.list = async (req,res)=>{
-    await classSubject.findOne({_id : req.query.id}).then(values => {
+    await classSubject.findOne({_id : req.body.classSubjectID}).then(values => {
         Student.find({class_id : values.class_id})
         .then(value =>{
                 var list = [];
