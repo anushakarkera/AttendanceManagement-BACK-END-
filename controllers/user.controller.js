@@ -122,19 +122,18 @@ module.exports.newPassword = async (req, res, next) => {
 }
 
 module.exports.timeTable = async (req,res) => {
-    await UserTT.findOne({user_id : req.userID}).then(result => {
         var data = [];
         var i = 0;
         const weekDay = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
         const today  = new Date().getDay();
-       
-        
-        const currentTimeTable = result[weekDay[today]];
 
-        currentTimeTable.forEach(val => {
+    await UserTT.findOne({user_id : req.userID} , {[weekDay[today]] : true }).then(result => {
+        
+        
+        result[weekDay[today]].forEach(val => {
 
             ClassSubject.findOne({ _id : val.classSubject_id }).then(allowd => {
-                    
+                    //console.log(allowd);
                 Class.findOne({ _id : allowd.class_id }).then(wished =>{
 
                     Subject.findOne({ _id : allowd.subject_id }).then(complete => {
@@ -150,17 +149,20 @@ module.exports.timeTable = async (req,res) => {
                         obj.time = val.time;
                         
                         data.push(obj);
+                    
+                        if(currentTimeTable.length === i){ 
+                            
+                            var a = data;
+                            new Response(200).setData(a).send(res); }
 
-                        if(currentTimeTable.length === i){ res.json(data); }
+                    }).catch(uncomplete => { new Response(404).send(res); });
 
-                    } , uncomplete => { new Response(404).send(res); });
-
-                } , unwished=>{ new Response(404).send(res); });
+                }).catch(unwished=>{ new Response(404).send(res); });
                    
-            } , unallowed => { new Response(404).send(res); });
+            }).catch(unallowed => { new Response(404).send(res); });
 
         });
 
-    } , error => { new Response(404).send(res); });
+    }).catch(error => { new Response(404).send(res); });
   
 }
