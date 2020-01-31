@@ -3,5 +3,5 @@ const router = require('express').Router();
 const studentController = require('../controllers/student.controller')
 
 //student routing
-router.get('/list?:classSubject_id',studentController.list);
+router.post('/list',studentController.list);
 module.exports = router;

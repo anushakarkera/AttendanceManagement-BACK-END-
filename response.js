@@ -18,7 +18,7 @@ let errorResponse = {
     404 : {error : 'Not Found'              },
     400 : {error : 'Bad Request'            },
     401 : {error : 'Unauthorized'           },
-    409 : {error : 'Conflict'               },
+    409 : {error : 'Email Conflict'         },
     422 : {error : 'Unprocessable Entity'   }
 }
 

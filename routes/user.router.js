@@ -4,8 +4,8 @@ const userController = require('../controllers/user.controller')
 
 router.post('/login',userController.login);
 router.post('/signup',userController.signup);
-router.put('/profileUpdate',userController.profileUpdate);
-router.get('/timeTable',userController.timeTable);
+router.post('/profileUpdate',userController.profileUpdate);
+router.post('/timeTable',userController.timeTable);
 router.post('/profile',userController.profile);
 router.post('/forgotpassword',userController.forgotPassword);
 router.post('/newpassword',userController.newPassword);
