@@ -2,11 +2,14 @@ module.exports = class Response{
     constructor(resCode){
         let res = {code : resCode,status : 'SUCCESS'};
         this.setData = (data) => { res.data = data;      return this; 	}
+        this.setError = (err) => { res.error = err; return this;}
         this.send = (resObj) => {
             if(errorResponse[resCode] === undefined)
                 resObj.status(resCode).send(res)
-            else
-                resObj.status(resCode).send(Object.assign(res,{status : 'FAILED'},errorResponse[resCode]));
+            else{
+                resObj.status(resCode).send(
+                    Object.assign(res,{status : 'FAILED'},(Object.keys(res).length > 2)?undefined:errorResponse[resCode]));
+            }
         }
     }
 }
@@ -19,7 +22,8 @@ let errorResponse = {
     400 : {error : 'Bad Request'            },
     401 : {error : 'Unauthorized'           },
     409 : {error : 'Email Conflict'         },
-    422 : {error : 'Unprocessable Entity'   }
+    422 : {error : 'Unprocessable Entity'   },
+    204 : {error: 'Required field missing'  }
 }
 
 /*

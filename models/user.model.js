@@ -9,28 +9,28 @@ var userSchema = new mongoose.Schema({
     fullName: {
         type: String,
         trim: true,
-        required: "Full name cannot be empty"
+        required: true
     },
     email: {
         type: String,
         unique: true,
-        required: "Email cannot be empty"
+        required: true
     },
     password: {
         type: String,
-        required: "Password cannot be empty"
+        required: true
         },
     phone: {
         type: String,
-        required: "Phone cannot be empty"
+        required: true
     },
     gender: {
         type: String,
-        required: "Gender cannot be empty"
+        required: true
     },
     city: {
         type: String,
-        required: "City cannot be empty"
+        required: true
     },
     token:  {
         type: String
