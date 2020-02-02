@@ -13,6 +13,15 @@ module.exports = class Response{
         }
     }
 }
+// module.exports.Res =  function Response(resCode){
+//     let res = {code : resCode,status : errorResponse[resCode]?'FAILED':'SUCCESS'};
+//     this.setData = function (data)  { res.data  = data;    return this; }
+//     this.setError = function (err)  { res.error = err;     return this; }
+//     this.send = (resObj) => {
+//         resObj.status(resCode).send(Object.assign(errorResponse[resCode],res));
+//     }
+//     return this;
+// }
 
 /*
 -- add negative response here using response code as a key --
