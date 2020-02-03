@@ -18,6 +18,7 @@ const OTP = require('../models/otp.model');
 
 module.exports.login = async (req, res) => {
     try {
+        //Comment: use any 1 approach (either object.assign (refer signup API) or variable method)
         const { email, password } = req.body;
         const user = await User.findByCredentials(email, password);
         const token = await user.generateAuthToken();
@@ -30,9 +31,11 @@ module.exports.login = async (req, res) => {
 
 module.exports.signup = (req, res, next) => {
     var user = new User();
+            //Comment: use any 1 approach (either variable method (refer login API or this))
     Object.assign(user, req.body);
     user.save()
         .then(value => {
+            //comment: response code is 200?
             new Response(201).send(res);
         })
         .catch (err => {
@@ -46,6 +49,7 @@ module.exports.signup = (req, res, next) => {
 
 module.exports.profile = async (req, res, next) => {
     try {
+        //Comment : why _id:false, _v:false??
         const userDetails = await User.findOne({ _id: req.userID }, { _id: false, __v: false, password: false, token: false });
         new Response(200).setData(userDetails).send(res);
     }
