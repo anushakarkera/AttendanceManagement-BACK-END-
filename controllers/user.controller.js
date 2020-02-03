@@ -112,13 +112,15 @@ module.exports.forgotPassword = async (req, res, next) => {
 module.exports.newPassword = async (req, res, next) => {
 
     const existingOTP = await OTP.findOne({ email: req.body.email }, { otp: true })
-    if (existingOTP && (existingOTP.otp === req.body.otp)) {
+    if(!existingOTP) new Response(409).send(res)
+    
+    else if ((existingOTP.otp === req.body.otp)) {
         var recievedPassword = req.body.password;
         if (recievedPassword)
             recievedPassword = await bcrypt.hash(recievedPassword, Math.random())
         User.findOneAndUpdate({ email: req.body.email }, { password: recievedPassword })
             .then(value => {
-                OTP.remove({ email: req.body.email }).then(updated => {
+                OTP.deleteOne({ email: req.body.email }).then(updated => {
                     new Response(200).send(res);
                 })
             }, reason => {
@@ -126,7 +128,7 @@ module.exports.newPassword = async (req, res, next) => {
             });
     }
     else {
-        new Response(400).send(res);
+        new Response(400).setError('Invalid OTP').send(res);
     }
 }
 
