@@ -8,7 +8,7 @@ router.post('/profileUpdate',userController.profileUpdate);
 router.post('/timeTable',userController.timeTable);
 router.post('/timeTable/list', userController.classTimetableList);
 router.post('/profile',userController.profile);
-router.post('/forgotpassword',userController.forgotPassword);
-router.post('/newpassword',userController.newPassword);
+router.post('/forgotPassword',userController.forgotPassword);
+router.post('/newPassword',userController.newPassword);
 
 module.exports = router;

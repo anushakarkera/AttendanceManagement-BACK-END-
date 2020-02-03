@@ -26,9 +26,14 @@ const auth = async(req, res, next) => {
         next();
         return true;
     } catch (error) {
-        handler.resultHandler(401,'Error','Not authorized to access this resource','error',res)
+        //Comment: Please find forgotpassword API url in user routes
+        if(req.url === '/user/login' || req.url === '/user/signup' || req.url === '/user/forgotPassword' || req.url === '/user/newPassword'){
+            next();
+            // return true;
+        }else{
+            handler.resultHandler(401,'Error','Not authorized to access this resource','error',res)
+        }
+        
     }
-
-}
 }
 module.exports = auth

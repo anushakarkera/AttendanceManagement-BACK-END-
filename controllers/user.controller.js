@@ -21,6 +21,7 @@ const OTP = require('../models/otp.model');
 
 module.exports.login = async (req, res) => {
     try {
+        //Comment: use any 1 approach (either object.assign (refer signup API) or variable method)
         const { email, password } = req.body;
         const user = await User.findByCredentials(email, password);
         const token = await user.generateAuthToken();
@@ -33,9 +34,11 @@ module.exports.login = async (req, res) => {
 
 module.exports.signup = (req, res, next) => {
     var user = new User();
+            //Comment: use any 1 approach (either variable method (refer login API or this))
     Object.assign(user, req.body);
     user.save()
         .then(value => {
+            //comment: response code is 200?
             new Response(201).send(res);
         })
         .catch (err => {
@@ -49,6 +52,7 @@ module.exports.signup = (req, res, next) => {
 
 module.exports.profile = async (req, res, next) => {
     try {
+        //Comment : why _id:false, _v:false??
         const userDetails = await User.findOne({ _id: req.userID }, { _id: false, __v: false, password: false, token: false });
         new Response(200).setData(userDetails).send(res);
     }
@@ -111,13 +115,15 @@ module.exports.forgotPassword = async (req, res, next) => {
 module.exports.newPassword = async (req, res, next) => {
 
     const existingOTP = await OTP.findOne({ email: req.body.email }, { otp: true })
-    if (existingOTP && (existingOTP.otp === req.body.otp)) {
+    if(!existingOTP) new Response(409).send(res)
+    
+    else if ((existingOTP.otp === req.body.otp)) {
         var recievedPassword = req.body.password;
         if (recievedPassword)
             recievedPassword = await bcrypt.hash(recievedPassword, Math.random())
         User.findOneAndUpdate({ email: req.body.email }, { password: recievedPassword })
             .then(value => {
-                OTP.remove({ email: req.body.email }).then(updated => {
+                OTP.deleteOne({ email: req.body.email }).then(updated => {
                     new Response(200).send(res);
                 })
             }, reason => {
@@ -125,7 +131,7 @@ module.exports.newPassword = async (req, res, next) => {
             });
     }
     else {
-        new Response(400).send(res);
+        new Response(400).setError('Invalid OTP').send(res);
     }
 }
 
