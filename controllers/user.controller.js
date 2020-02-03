@@ -122,7 +122,7 @@ module.exports.newPassword = async (req, res, next) => {
             });
     }
     else {
-        new Response(400).send(res);
+        new Response(400).setError('Invalid OTP').send(res);
     }
 }
 
