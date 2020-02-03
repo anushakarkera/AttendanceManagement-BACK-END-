@@ -8,6 +8,7 @@ module.exports = class Response{
                 resObj.status(resCode).send(res)
             else{
                 resObj.status(resCode).send(
+                    //Comment: why checking length??
                     Object.assign(res,{status : 'FAILED'},(Object.keys(res).length > 2)?undefined:errorResponse[resCode]));
             }
         }
