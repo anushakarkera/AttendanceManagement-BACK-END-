@@ -140,33 +140,41 @@ module.exports.newPassword = async (req, res, next) => {
 
 
 module.exports.timeTable = async (req, res)=> {
-    
+    var today;
+    //console.log(Class.collection.name)
+    if(!req.body.date){ today  = new Date().getDay(); }
+    else{  const date = new Date(req.body.date);today = date.getDay(); }
     const weekDay = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
-    const today  = new Date().getDay();
-    await UserTT.findOne({user_id : req.userID }, { [weekDay[today]] : true }).then(result => {
+    
+    
+    await UserTT.findOne({ user_id : req.userID }, { [weekDay[today]] : true }).then(result => {
+        //console.log(result);
         result[weekDay[today]].forEach(element => {
 
             ClassSubject.aggregate([{$match : { _id : element.classSubject_id}},
             {$project : { _id :1 }},
-
-
+            {$lookup :  {
+                'from': Class.collection.name.toString().trim(),
+                'localField': 'this.class_id',
+                'foreignField': 'this.ObjectId(_id)',
+                'as': 'csids'
+              }},
 
             {$lookup : {
-                from : 'classes',
-                localField : 'class_id',
-                foreignField : '_id',
-                as : 'ccids'
-            }},
-        //{$unwind : '$ccids'},
-    {$lookup : {
-        from : 'subjects',
-        localField : 'subject_id',
-        foreignField : '_id',
-        as : 'sids'
+                'from' : Subject.collection.name.toString().trim(),
+                'localField' : 'this.subject_id',
+                'foreignField' : 'this.ObjectId(_id)',
+                'as' : 'sids'
+            }}
+], (err, response) => {
+    if(!err){
+        //var data = [] ;
+        console.log(response);
+        //console.log(response[0].csids)
+    }else{
+        console.log(err);
     }
-
-
-}], (err, ress) => {if(!err)console.log(ress);else console.log(err)});
+});
             
             
         });
