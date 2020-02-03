@@ -17,7 +17,7 @@ const auth = async(req, res, next) => {
         return true;
     } catch (error) {
         //Comment: Please find forgotpassword API url in user routes
-        if(req.url === '/user/login' || req.url === '/user/signup' || req.url === '/user/forgotpassword' || req.url === '/user/newpassword'){
+        if(req.url === '/user/login' || req.url === '/user/signup' || req.url === '/user/forgotPassword' || req.url === '/user/newPassword'){
             next();
             // return true;
         }else{
