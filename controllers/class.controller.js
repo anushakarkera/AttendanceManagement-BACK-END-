@@ -15,7 +15,7 @@ const Student = require('../models/student.model');
 module.exports.addAttendance = async (req,res,next) => {
     let data = req.body;
     let attendanceLog = new AttendanceLog({
-        user_id:    req.userID,
+        user_id: req.userID,
         classSubject_id : data.classSubjectID,
         time: data.time,
     });
@@ -66,24 +66,5 @@ module.exports.addAttendance = async (req,res,next) => {
 module.exports.getAttendance = async (req,res) => {
 
 }
-module.exports.sendMessage=async(req,res) =>{
-    
-}
-   
-/*module.exports.sendMessage = async (req,res) => {
-    
-    
-    nexmo.message.sendSms(from, to, text, (err, responseData) => {
-        if (err) {
-            console.log(err);
-        } else {
-            if(responseData.messages[0]['status'] === "0") {
-                console.log("Message sent successfully.");
-            } else {
-                console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
-            }
-        }
-    })
-}*/
 
     
