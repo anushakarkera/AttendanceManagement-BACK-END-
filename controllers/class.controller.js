@@ -69,10 +69,6 @@ module.exports.addAttendance = async (req,res,next) => {
     
 }
 module.exports.getAttendance = async (req,res) => {
-
-}
-module.exports.sendMessage=async(req,res) =>{
-    
 }
 
     
