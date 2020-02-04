@@ -141,51 +141,70 @@ module.exports.newPassword = async (req, res, next) => {
 
 module.exports.timeTable = async (req, res)=> {
     var today;
-    //console.log(Class.collection.name)
+    var data = [] ;
+    var i=0;
     if(!req.body.date){ today  = new Date().getDay(); }
     else{  const date = new Date(req.body.date);today = date.getDay(); }
     const weekDay = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
     
     
     await UserTT.findOne({ user_id : req.userID }, { [weekDay[today]] : true }).then(result => {
-        //console.log(result);
+        // console.log(result[weekDay[today]].length)
         result[weekDay[today]].forEach(element => {
 
             ClassSubject.aggregate([
             {$match : { _id : element.classSubject_id}},
-            {$group : {_id : {_id : '$_id',class_id : '$class_id'}}},
-            //{$group: {class : {class_id : '$class_id'} }},
-            //{$group : {subject : {subject_id : '$subject_id' } }},
+            {$group : {_id : {_id : '$_id',class_id : '$class_id',subject_id : '$subject_id'}}},
+            
             {$lookup :  {
                 'from': Class.collection.name.toString().trim(),
                 'localField': 'class_id',
                 'foreignField': 'ObjectId(_id)',
                 'as': 'csids'
               }},
-              //{$unwind: '$csids'},
+              
             {$lookup : {
                 'from' : Subject.collection.name.toString().trim(),
                 'localField' : 'subject_id',
                 'foreignField' : 'ObjectId(_id)',
                 'as' : 'sids'
             }},
-            //{$unwind : '$sids'}
+           
 ], (err, response) => {
     if(!err){
-        //var data = [] ;
-        console.log(response);
-        //console.log(response[0].csids)
-    }else{
-        console.log(err);
-    }
-});
+        var obj = {};
+
+
+        response[0].csids.forEach(a => {
             
-            
+                if(a._id.equals(response[0]._id.class_id)){
+                    obj.className = a.name;
+                    obj.roomNumber = a.roomNumber;
+                }
         });
 
 
-}).catch(error => { console.log(error);});
+        response[0].sids.forEach(a => {
+            if(a._id.equals(response[0]._id.subject_id)){
+                obj.subjectName = a.name;
+            }
+        });
 
+
+        data.push(obj);
+        ++i;
+        if(i===result[weekDay[today]].length)console.log(data);
+
+    }else{
+        console.log(err);
+    }
+    });
+            
+            
+    });
+
+
+}).catch(error => { console.log(error);});
 }
 
 /*
