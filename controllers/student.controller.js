@@ -11,7 +11,7 @@ module.exports.list = async (req,res)=>{
         .then(value =>{
                 var list = [];
                (value.forEach(element => { list.push(element.fullName) }));
-               res.send(list);
+               new Response(200).setData(list).send(res);
            }).catch(reason => {
                new Response(404).send(res);
            });        
