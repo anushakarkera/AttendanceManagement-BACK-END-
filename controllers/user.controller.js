@@ -142,6 +142,7 @@ module.exports.newPassword = async (req, res, next) => {
 module.exports.timeTable = async (req, res)=> {
     var today;
     var data = [] ;
+    
     var i=0;
     if(!req.body.date){ today  = new Date().getDay(); }
     else{  const date = new Date(req.body.date);today = date.getDay(); }
@@ -149,7 +150,6 @@ module.exports.timeTable = async (req, res)=> {
     
     
     await UserTT.findOne({ user_id : req.userID }, { [weekDay[today]] : true }).then(result => {
-        // console.log(result[weekDay[today]].length)
         result[weekDay[today]].forEach(element => {
 
             ClassSubject.aggregate([
@@ -173,11 +173,11 @@ module.exports.timeTable = async (req, res)=> {
 ], (err, response) => {
     if(!err){
         var obj = {};
-
-
+        obj.time = element.time;
         response[0].csids.forEach(a => {
             
                 if(a._id.equals(response[0]._id.class_id)){
+                    
                     obj.classSubjectId = response[0]._id._id;
                     obj.className = a.name;
                     obj.roomNumber = a.roomNumber;
@@ -193,6 +193,7 @@ module.exports.timeTable = async (req, res)=> {
 
 
         data.push(obj);
+        obj = {};
         ++i;
 
 
