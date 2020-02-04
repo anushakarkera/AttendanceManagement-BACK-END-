@@ -141,15 +141,13 @@ module.exports.newPassword = async (req, res, next) => {
 
 
 module.exports.timeTable = async (req, res)=> {
-    var today  = new Date().getDay();
-    
+
     var data = [] ;
-    
     var i=0;
-    if(req.body.date){ const date = new Date(req.body.date);
-        today = date.getDay();}
     const weekDay = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
-    
+    var today  = new Date().getDay();
+
+    if(req.body.date){ const date = new Date(req.body.date); today = date.getDay();}
     
     await UserTT.findOne({ user_id : req.userID }, { [weekDay[today]] : true }).then(result => {
 
@@ -175,7 +173,9 @@ module.exports.timeTable = async (req, res)=> {
             }},
            
 ], (err, response) => {
+    
     if(!err){
+
         var obj = {};
 
         response[0].csids.forEach(a => {
