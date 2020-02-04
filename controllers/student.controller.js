@@ -10,7 +10,10 @@ module.exports.list = async (req,res)=>{
         Student.find({class_id : values.class_id})
         .then(value =>{
                 var list = [];
-               (value.forEach(element => { list.push(element.fullName) }));
+               (value.forEach(element => { list.push({
+                "studentID":element._id,
+                "name":element.fullName
+                }) }));
                new Response(200).setData(list).send(res);
            }).catch(reason => {
                new Response(404).send(res);
