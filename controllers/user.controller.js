@@ -206,7 +206,7 @@ module.exports.timeTable = async (req, res)=> {
     });
 
 
-}).catch(error => { console.log(error);});
+}).catch(error => { new Response(404).send(res)});
 }
 
 /*
