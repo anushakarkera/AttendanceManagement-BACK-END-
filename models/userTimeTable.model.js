@@ -7,8 +7,9 @@ const timeTable = new mongoose.Schema({
     time : String
 })
 
-module.exports=mongoose.model('userTimeTable',new mongoose.Schema({
+module.exports=mongoose.model('usertimetables',new mongoose.Schema({
     user_id : ObjectID,
+    
     mon :[ timeTable ],
     tue :[ timeTable ],
     wed :[ timeTable ],

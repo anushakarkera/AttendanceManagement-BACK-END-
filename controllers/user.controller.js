@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+//const fs = require('fs');
 
 const User = require('../models/user.model');
 const UserTT = require('../models/userTimeTable.model');
@@ -7,6 +8,7 @@ const Subject = require('../models/subject.model');
 const Class = require('../models/class.model');
 
 const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose');
 
 const Response = require('../response');
 
@@ -15,6 +17,7 @@ const randomString = require('randomstring');
 const mail = require('../middleware/mail');
 
 const OTP = require('../models/otp.model');
+
 
 module.exports.login = async (req, res) => {
     try {
@@ -132,7 +135,57 @@ module.exports.newPassword = async (req, res, next) => {
     }
 }
 
-module.exports.timeTable = async (req,res) => {
+
+
+
+
+module.exports.timeTable = async (req, res)=> {
+    var today;
+    //console.log(Class.collection.name)
+    if(!req.body.date){ today  = new Date().getDay(); }
+    else{  const date = new Date(req.body.date);today = date.getDay(); }
+    const weekDay = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
+    
+    
+    await UserTT.findOne({ user_id : req.userID }, { [weekDay[today]] : true }).then(result => {
+        //console.log(result);
+        result[weekDay[today]].forEach(element => {
+
+            ClassSubject.aggregate([{$match : { _id : element.classSubject_id}},
+            {$project : { _id :1 }},
+            {$lookup :  {
+                'from': Class.collection.name.toString().trim(),
+                'localField': 'this.class_id',
+                'foreignField': 'this.ObjectId(_id)',
+                'as': 'csids'
+              }},
+
+            {$lookup : {
+                'from' : Subject.collection.name.toString().trim(),
+                'localField' : 'this.subject_id',
+                'foreignField' : 'this.ObjectId(_id)',
+                'as' : 'sids'
+            }}
+], (err, response) => {
+    if(!err){
+        //var data = [] ;
+        console.log(response);
+        //console.log(response[0].csids)
+    }else{
+        console.log(err);
+    }
+});
+            
+            
+        });
+
+
+}).catch(error => { console.log(error);});
+
+}
+
+/*
+    
         var data = [];
         var i = 0;
         const weekDay = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
@@ -140,7 +193,7 @@ module.exports.timeTable = async (req,res) => {
 
     await UserTT.findOne({user_id : req.userID} , {[weekDay[today]] : true }).then(result => {
         
-        
+        console.log(result);
         result[weekDay[today]].forEach(val => {
 
             ClassSubject.findOne({ _id : val.classSubject_id }).then(allowd => {
@@ -176,4 +229,14 @@ module.exports.timeTable = async (req,res) => {
 
     }).catch(error => { new Response(404).send(res); });
   
+}*/
+module.exports.classTimetableList = async (req, res) => {
+    var date = new Date(req.body.date);
+var week = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
+var day = date.getDay();
+var k = await UserTT.aggregate([
+    {$match : { user_id : req.userID }},
+    {$project : { [week[day]] : 1 }}
+]);
+console.log(k[0][week[day]]);
 }
