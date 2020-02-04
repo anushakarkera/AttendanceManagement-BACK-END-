@@ -6,6 +6,7 @@ const UserTT = require('../models/userTimeTable.model');
 const ClassSubject = require('../models/classSubject.model');
 const Subject = require('../models/subject.model');
 const Class = require('../models/class.model');
+const AttendanceLog = require('../models/attendanceLog.model');
 
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
@@ -140,18 +141,21 @@ module.exports.newPassword = async (req, res, next) => {
 
 
 module.exports.timeTable = async (req, res)=> {
-    var today;
+    var today  = new Date().getDay();
+    
     var data = [] ;
     
     var i=0;
-    if(!req.body.date){ today  = new Date().getDay(); }
-    else{  const date = new Date(req.body.date);today = date.getDay(); }
+    if(req.body.date){ const date = new Date(req.body.date);
+        today = date.getDay();}
     const weekDay = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
     
     
     await UserTT.findOne({ user_id : req.userID }, { [weekDay[today]] : true }).then(result => {
-        result[weekDay[today]].forEach(element => {
 
+        if(!result[weekDay[today]]){ return new Response(404).send(res);}
+
+        result[weekDay[today]].forEach(element => {
             ClassSubject.aggregate([
             {$match : { _id : element.classSubject_id}},
             {$group : {_id : {_id : '$_id',class_id : '$class_id',subject_id : '$subject_id'}}},
@@ -173,7 +177,7 @@ module.exports.timeTable = async (req, res)=> {
 ], (err, response) => {
     if(!err){
         var obj = {};
-        obj.time = element.time;
+
         response[0].csids.forEach(a => {
             
                 if(a._id.equals(response[0]._id.class_id)){
@@ -184,13 +188,18 @@ module.exports.timeTable = async (req, res)=> {
                 }
         });
 
-
         response[0].sids.forEach(a => {
             if(a._id.equals(response[0]._id.subject_id)){
                 obj.subjectName = a.name;
             }
         });
 
+        obj.time = element.time;
+
+        obj.attendanceTaken = 'false';
+        if(attendanceStatus()){
+            obj.attendanceTaken = 'true';
+        }
 
         data.push(obj);
         obj = {};
@@ -209,6 +218,11 @@ module.exports.timeTable = async (req, res)=> {
 }).catch(error => { console.log(error);});
 }
 
+
+
+function attendanceStatus(){
+    return true;
+}
 /*
     
         var data = [];
