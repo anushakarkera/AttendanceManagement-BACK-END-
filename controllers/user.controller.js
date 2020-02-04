@@ -178,6 +178,7 @@ module.exports.timeTable = async (req, res)=> {
         response[0].csids.forEach(a => {
             
                 if(a._id.equals(response[0]._id.class_id)){
+                    obj.classSubjectId = response[0]._id._id;
                     obj.className = a.name;
                     obj.roomNumber = a.roomNumber;
                 }
@@ -193,10 +194,10 @@ module.exports.timeTable = async (req, res)=> {
 
         data.push(obj);
         ++i;
-        if(i===result[weekDay[today]].length)console.log(data);
 
-    }else{
-        console.log(err);
+
+        if(i===result[weekDay[today]].length){new Response(200).setData(data).send(res);}
+
     }
     });
             
