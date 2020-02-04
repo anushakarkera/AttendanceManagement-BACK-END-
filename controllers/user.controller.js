@@ -151,21 +151,25 @@ module.exports.timeTable = async (req, res)=> {
         //console.log(result);
         result[weekDay[today]].forEach(element => {
 
-            ClassSubject.aggregate([{$match : { _id : element.classSubject_id}},
-            {$project : { _id :1 }},
+            ClassSubject.aggregate([
+            {$match : { _id : element.classSubject_id}},
+            {$group : {_id : {_id : '$_id',class_id : '$class_id'}}},
+            //{$group: {class : {class_id : '$class_id'} }},
+            //{$group : {subject : {subject_id : '$subject_id' } }},
             {$lookup :  {
                 'from': Class.collection.name.toString().trim(),
-                'localField': 'this.class_id',
-                'foreignField': 'this.ObjectId(_id)',
+                'localField': 'class_id',
+                'foreignField': 'ObjectId(_id)',
                 'as': 'csids'
               }},
-
+              //{$unwind: '$csids'},
             {$lookup : {
                 'from' : Subject.collection.name.toString().trim(),
-                'localField' : 'this.subject_id',
-                'foreignField' : 'this.ObjectId(_id)',
+                'localField' : 'subject_id',
+                'foreignField' : 'ObjectId(_id)',
                 'as' : 'sids'
-            }}
+            }},
+            //{$unwind : '$sids'}
 ], (err, response) => {
     if(!err){
         //var data = [] ;
@@ -230,13 +234,4 @@ module.exports.timeTable = async (req, res)=> {
     }).catch(error => { new Response(404).send(res); });
   
 }*/
-module.exports.classTimetableList = async (req, res) => {
-    var date = new Date(req.body.date);
-var week = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
-var day = date.getDay();
-var k = await UserTT.aggregate([
-    {$match : { user_id : req.userID }},
-    {$project : { [week[day]] : 1 }}
-]);
-console.log(k[0][week[day]]);
-}
+
