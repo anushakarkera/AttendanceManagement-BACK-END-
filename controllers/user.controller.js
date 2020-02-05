@@ -275,3 +275,34 @@ module.exports.timeTable = async (req, res)=> {
   
 }*/
 
+function attendanceTaken(user_id,classSubject_id,time ,fromDate){
+    console.log(user_id);
+    const toDate = new Date(fromDate);
+
+    fromDate.setHours(0,0,0,0);
+    toDate.setHours(23,59,59,999);
+    console.log("from: " + fromDate);
+    console.log("to: " + toDate);
+    
+    const fromDate_id = Math.floor(fromDate.getTime() / 1000).toString(16) + "0000000000000000";
+    const toDate_id = Math.floor(toDate.getTime() / 1000).toString(16) + "0000000000000000";
+    
+    
+    AttendanceLog.find({
+        _id: {$gte : ObjectId(fromDate_id),$lte : ObjectId(toDate_id)},
+        user_id: ObjectId(user_id),
+        classSubject_id:classSubject_id,
+        time:time
+    })
+        .then(val => {
+            if(val.length>0)
+                return true;
+            else
+                return false;
+        })
+        .catch(err => {
+            console.log("nope")
+        })
+
+  
+}
