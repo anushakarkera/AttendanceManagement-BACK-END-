@@ -145,10 +145,14 @@ module.exports.timeTable = async (req, res)=> {
     var data = [] ;
     var i=0;
     const weekDay = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
-    var today  = new Date().getDay();
-
-    if(req.body.date){ const date = new Date(req.body.date); today = date.getDay();}
+    var date = new Date();
     
+
+    if(req.body.date){ date = new Date(req.body.date); }
+    var today  = date.getDay();
+    // console.log(date.getDate());
+    // console.log(date.getFullYear());
+    // console.log(date.getMonth()+1);
     await UserTT.findOne({ user_id : req.userID }, { [weekDay[today]] : true }).then(result => {
 
         if(!result[weekDay[today]]){ return new Response(404).send(res);}
@@ -195,9 +199,8 @@ module.exports.timeTable = async (req, res)=> {
         });
 
         obj.time = element.time;
-
         obj.attendanceTaken = 'false';
-        if(attendanceStatus()){
+        if(attendanceStatus(req.userID, element.classSubject_id, element.time, date) === true){
             obj.attendanceTaken = 'true';
         }
 
@@ -220,8 +223,10 @@ module.exports.timeTable = async (req, res)=> {
 
 
 
-function attendanceStatus(){
-    return true;
+ async function attendanceStatus(userId, classSubjectId, time, date){
+   
+      return false;
+    
 }
 /*
     
