@@ -11,11 +11,12 @@ const auth = async(req, res, next) => {
     {
     try {    
     const token = req.header('Authorization').replace('Bearer ', '');
-    //console.log(req.header('Authorization'))
-    //console.log(process.env.JWT_KEY)
+    // console.log(req.header('Authorization'))
+    // console.log(process.env.JWT_KEY)
     const data = jwt.verify(token, process.env.JWT_KEY);
     //console.log(data);
-        const user = await User.findOne({ _id: data._id, token: token });
+        const user = await User.findOne({ _id: data._id });
+        //console.log(user);
         if (!user) {
             //console.log('yes')
             throw new Error();
