@@ -136,9 +136,32 @@ module.exports.newPassword = async (req, res, next) => {
     }
 }
 
+const ObjectId = mongoose.Types.ObjectId;
 
+const getTimeStamp = (date) => {return Math.floor(date.getTime() / 1000).toString(16);}
+function attendanceTaken(user_id,classSubject_id,time ,fromDate){
+    return new Promise((resolve,reject) => {
+        const toDate = new Date(fromDate);
+        fromDate.setHours(0,0,0,0);
+        toDate.setHours(23,59,59,999);
 
-
+        const fromDate_id = getTimeStamp(fromDate) + "0000000000000000";
+        const toDate_id   = getTimeStamp(toDate)   + "0000000000000000";
+        AttendanceLog.find({
+            _id: {$gte : ObjectId(fromDate_id),$lte : ObjectId(toDate_id)},
+            user_id: ObjectId(user_id),
+            classSubject_id:classSubject_id,
+            time:time
+        })
+        .then(attendanceLog => {
+            if(attendanceLog.length > 0){
+                resolve('true');
+            }else{
+                resolve('false');
+            }
+        })
+    })
+}
 
 module.exports.timeTable = async (req, res)=> {
 
@@ -176,7 +199,7 @@ module.exports.timeTable = async (req, res)=> {
                 'as' : 'sids'
             }},
            
-], (err, response) => {
+],async  (err, response) => {
     
     if(!err){
 
@@ -197,18 +220,11 @@ module.exports.timeTable = async (req, res)=> {
                 obj.subjectName = a.name;
             }
         });
-
         obj.time = element.time;
-        obj.attendanceTaken = 'false';
-        if(attendanceStatus(req.userID, element.classSubject_id, element.time, date) === true){
-            obj.attendanceTaken = 'true';
-        }
-
+        obj.attendanceTaken = await attendanceTaken(req.userID, element.classSubject_id,element.time, new Date())
         data.push(obj);
         obj = {};
         ++i;
-
-
         if(i===result[weekDay[today]].length){new Response(200).setData(data).send(res);}
 
     }
@@ -274,35 +290,11 @@ module.exports.timeTable = async (req, res)=> {
     }).catch(error => { new Response(404).send(res); });
   
 }*/
+// let date = {
+//     yy:2020,
+//     mm:02,
+//     dd:05,
+//     HH:05,
+//     MM:30
+// }
 
-function attendanceTaken(user_id,classSubject_id,time ,fromDate){
-    console.log(user_id);
-    const toDate = new Date(fromDate);
-
-    fromDate.setHours(0,0,0,0);
-    toDate.setHours(23,59,59,999);
-    console.log("from: " + fromDate);
-    console.log("to: " + toDate);
-    
-    const fromDate_id = Math.floor(fromDate.getTime() / 1000).toString(16) + "0000000000000000";
-    const toDate_id = Math.floor(toDate.getTime() / 1000).toString(16) + "0000000000000000";
-    
-    
-    AttendanceLog.find({
-        _id: {$gte : ObjectId(fromDate_id),$lte : ObjectId(toDate_id)},
-        user_id: ObjectId(user_id),
-        classSubject_id:classSubject_id,
-        time:time
-    })
-        .then(val => {
-            if(val.length>0)
-                return true;
-            else
-                return false;
-        })
-        .catch(err => {
-            console.log("nope")
-        })
-
-  
-}
