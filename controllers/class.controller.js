@@ -69,6 +69,34 @@ module.exports.addAttendance = async (req,res,next) => {
     
 }
 module.exports.getAttendance = async (req,res) => {
+    try {
+        var absent = await AttendanceLog.findOne({classSubject_id :req.body.classSubjectID,time:req.body.time,user_id:req.userID},{studentIDs:true})
+        //console.log(absent);
+        //const absent = await absentLog.find({attendanceLog_id:oneAttendance._id},{student_id:true});
+        //console.log(absent);
+        //console.log(absent.studentIDs);
+        const classID = await ClassSubject.findOne({_id:req.body.classSubjectID},{class_id:true});
+        //console.log(classID);
+        const students = await Student.find({class_id:classID.class_id},{fullName:true});
+        //console.log(students);
+        let ab ={};
+        absent.studentIDs.forEach(ele =>{
+            ab[ele] = true;
+        })
+        //console.log(ab);
+        let resData =[]
+        students.forEach(ele =>{
+            resData.push({
+                studentName : ele.fullName,
+                absent : ab[ele._id]?true:false
+            })
+        })
+        resString = JSON.stringify(resData);
+        res.send(resString);
+}
+     catch(err) {
+        console.log('error Occurred!!!');
+     }
 
 }
 module.exports.sendMessage=async(req,res) =>{
