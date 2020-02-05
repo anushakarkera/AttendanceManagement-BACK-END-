@@ -141,47 +141,71 @@ module.exports.newPassword = async (req, res, next) => {
 
 module.exports.timeTable = async (req, res)=> {
     var today;
-    //console.log(Class.collection.name)
+    var data = [] ;
+    var i=0;
     if(!req.body.date){ today  = new Date().getDay(); }
     else{  const date = new Date(req.body.date);today = date.getDay(); }
     const weekDay = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
     
     
     await UserTT.findOne({ user_id : req.userID }, { [weekDay[today]] : true }).then(result => {
-        //console.log(result);
+        // console.log(result[weekDay[today]].length)
         result[weekDay[today]].forEach(element => {
 
-            ClassSubject.aggregate([{$match : { _id : element.classSubject_id}},
-            {$project : { _id :1 }},
+            ClassSubject.aggregate([
+            {$match : { _id : element.classSubject_id}},
+            {$group : {_id : {_id : '$_id',class_id : '$class_id',subject_id : '$subject_id'}}},
+            
             {$lookup :  {
                 'from': Class.collection.name.toString().trim(),
-                'localField': 'this.class_id',
-                'foreignField': 'this.ObjectId(_id)',
+                'localField': 'class_id',
+                'foreignField': 'ObjectId(_id)',
                 'as': 'csids'
               }},
-
+              
             {$lookup : {
                 'from' : Subject.collection.name.toString().trim(),
-                'localField' : 'this.subject_id',
-                'foreignField' : 'this.ObjectId(_id)',
+                'localField' : 'subject_id',
+                'foreignField' : 'ObjectId(_id)',
                 'as' : 'sids'
-            }}
+            }},
+           
 ], (err, response) => {
     if(!err){
-        //var data = [] ;
-        console.log(response);
-        //console.log(response[0].csids)
-    }else{
-        console.log(err);
-    }
-});
+        var obj = {};
+
+
+        response[0].csids.forEach(a => {
             
-            
+                if(a._id.equals(response[0]._id.class_id)){
+                    obj.classSubjectId = response[0]._id._id;
+                    obj.className = a.name;
+                    obj.roomNumber = a.roomNumber;
+                }
         });
 
 
-}).catch(error => { console.log(error);});
+        response[0].sids.forEach(a => {
+            if(a._id.equals(response[0]._id.subject_id)){
+                obj.subjectName = a.name;
+            }
+        });
 
+
+        data.push(obj);
+        ++i;
+
+
+        if(i===result[weekDay[today]].length){new Response(200).setData(data).send(res);}
+
+    }
+    });
+            
+            
+    });
+
+
+}).catch(error => { console.log(error);});
 }
 
 /*
@@ -230,13 +254,4 @@ module.exports.timeTable = async (req, res)=> {
     }).catch(error => { new Response(404).send(res); });
   
 }*/
-module.exports.classTimetableList = async (req, res) => {
-    var date = new Date(req.body.date);
-var week = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
-var day = date.getDay();
-var k = await UserTT.aggregate([
-    {$match : { user_id : req.userID }},
-    {$project : { [week[day]] : 1 }}
-]);
-console.log(k[0][week[day]]);
-}
+

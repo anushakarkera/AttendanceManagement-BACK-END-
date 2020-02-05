@@ -11,11 +11,11 @@ module.exports.list = async (req,res)=>{
         .then(value =>{
                 var list = [];
                (value.forEach(element => { list.push(element.fullName) }));
-               res.send(list);
-           },reason => {
+               new Response(200).setData(list).send(res);
+           }).catch(reason => {
                new Response(404).send(res);
            });        
-    }, error => {
-        res.send("error");
+    }).catch(error => {
+        new Response(404).setData('Student list not found for the class').send(res);
     });
 }
