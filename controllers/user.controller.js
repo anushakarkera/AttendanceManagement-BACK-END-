@@ -136,19 +136,46 @@ module.exports.newPassword = async (req, res, next) => {
     }
 }
 
+const ObjectId = mongoose.Types.ObjectId;
 
+const getTimeStamp = (date) => {return Math.floor(date.getTime() / 1000).toString(16);}
+function attendanceTaken(user_id,classSubject_id,time ,fromDate){
+    return new Promise((resolve,reject) => {
+        const toDate = new Date(fromDate);
+        fromDate.setHours(0,0,0,0);
+        toDate.setHours(23,59,59,999);
 
-
+        const fromDate_id = getTimeStamp(fromDate) + "0000000000000000";
+        const toDate_id   = getTimeStamp(toDate)   + "0000000000000000";
+        AttendanceLog.find({
+            _id: {$gte : ObjectId(fromDate_id),$lte : ObjectId(toDate_id)},
+            user_id: ObjectId(user_id),
+            classSubject_id:classSubject_id,
+            time:time
+        })
+        .then(attendanceLog => {
+            if(attendanceLog.length > 0){
+                resolve('true');
+            }else{
+                resolve('false');
+            }
+        })
+    })
+}
 
 module.exports.timeTable = async (req, res)=> {
 
     var data = [] ;
     var i=0;
     const weekDay = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
-    var today  = new Date().getDay();
-
-    if(req.body.date){ const date = new Date(req.body.date); today = date.getDay();}
+    var date = new Date();
     
+
+    if(req.body.date){ date = new Date(req.body.date); }
+    var today  = date.getDay();
+    // console.log(date.getDate());
+    // console.log(date.getFullYear());
+    // console.log(date.getMonth()+1);
     await UserTT.findOne({ user_id : req.userID }, { [weekDay[today]] : true }).then(result => {
 
         if(!result[weekDay[today]]){ return new Response(404).send(res);}
@@ -172,7 +199,7 @@ module.exports.timeTable = async (req, res)=> {
                 'as' : 'sids'
             }},
            
-], (err, response) => {
+],async  (err, response) => {
     
     if(!err){
 
@@ -193,19 +220,11 @@ module.exports.timeTable = async (req, res)=> {
                 obj.subjectName = a.name;
             }
         });
-
         obj.time = element.time;
-
-        obj.attendanceTaken = 'false';
-        if(attendanceStatus()){
-            obj.attendanceTaken = 'true';
-        }
-
+        obj.attendanceTaken = await attendanceTaken(req.userID, element.classSubject_id,element.time, new Date())
         data.push(obj);
         obj = {};
         ++i;
-
-
         if(i===result[weekDay[today]].length){new Response(200).setData(data).send(res);}
 
     }
@@ -220,8 +239,10 @@ module.exports.timeTable = async (req, res)=> {
 
 
 
-function attendanceStatus(){
-    return true;
+ async function attendanceStatus(userId, classSubjectId, time, date){
+   
+      return false;
+    
 }
 /*
     
@@ -269,4 +290,11 @@ function attendanceStatus(){
     }).catch(error => { new Response(404).send(res); });
   
 }*/
+// let date = {
+//     yy:2020,
+//     mm:02,
+//     dd:05,
+//     HH:05,
+//     MM:30
+// }
 

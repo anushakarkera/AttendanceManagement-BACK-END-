@@ -3,11 +3,6 @@ const User = require('../models/user.model')
 const handler = require('../controllers/handler')
 //require('dotenv').config();
 const auth = async(req, res, next) => {
-    if(req.url === '/user/login' || req.url === '/user/signup' || req.url === '/user/forgotpassword' || req.url === '/user/newpassword'){
-        next();
-        return true;
-    }
-    else
     {
     try {    
     const token = req.header('Authorization').replace('Bearer ', '');
