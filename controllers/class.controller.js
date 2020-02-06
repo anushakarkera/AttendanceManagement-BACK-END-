@@ -59,8 +59,8 @@ module.exports.addAttendance = async (req,res,next) => {
 }
 module.exports.getAttendance = async (req,res) => {
     try {
-            var absent = await AttendanceLog.findOne({classSubject_id :req.body.classSubjectID,time:req.body.time,user_id:req.userID},{studentIDs:true});
-            const classID = await ClassSubject.findOne({_id:req.body.classSubjectID},{class_id:true});
+            var absent = await AttendanceLog.findOne({_id:req.body.attendanceLogID,user_id:req.userID},{studentIDs:true,classSubject_id:true});
+            const classID = await ClassSubject.findOne({_id:absent.classSubject_id},{class_id:true});
             const students = await Student.find({class_id:classID.class_id},{fullName:true});
             let ab ={};
             absent.studentIDs.forEach(ele =>{
@@ -73,11 +73,10 @@ module.exports.getAttendance = async (req,res) => {
                     absent : ab[ele._id]?true:false
                 })
             })
-            resString = JSON.stringify(resData);
-            res.send(resString);
+            new Response(200).setData(resData).send(res);
         }
     catch(err) {
-        console.log('error Occurred!!!');
+        new Response(404).send(res);
      }
 }
 
