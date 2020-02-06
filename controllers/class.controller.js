@@ -12,14 +12,15 @@ const nexmo = new Nexmo({
 const Student = require('../models/student.model');
 const ClassSubject=require('../models/classSubject.model')
 const Subject=require('../models/subject.model')
+var crypto = require('crypto');
+const getTimeStamp = (date) => {return Math.floor(date.getTime() / 1000).toString(16)}
 
 module.exports.addAttendance = async (req,res,next) => {
     let data = req.body;
-    var smsto=new Array()
     let attendanceLog = new AttendanceLog({
-        user_id: req.userID,
+        _id: getTimeStamp(new Date(req.body.date))+crypto.randomBytes(8).toString("hex"),
+        user_id:    req.userID,
         classSubject_id : data.classSubjectID,
-        time: data.time,
         studentIDs : data.studentIDs
         
     });
@@ -34,33 +35,36 @@ module.exports.addAttendance = async (req,res,next) => {
                     var sub_name=result[0].name;
                     Student.find({"_id":{"$in":studentIDs}},{phone:true,fullName:true})
                         .then(val=>{
-                            val.forEach(element=>{
-                            var to=element.phone;
-                            const text = element.fullName+' is absent today for '+ sub_name+' class which is at '+data.time+' !'
-                            nexmo.message.sendSms(from, to, text, (err, responseData) => {
-                                if (err) {
-                                    console.log(err);
-                                }else {
-                                    if(responseData.messages[0]['status'] === "0") {
-                                        console.log("Message sent successfully.");
-                                    } else {
-                                        console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
-                                    }
-                                }
-                            })
+                            new Response(200).send(res)
+                            sms(val,sub_name)
                         })
-                        new Response(200).send(res)
-                    })
                 })
             })   
     },reason => {
         new Response(422).send(res); 
     })
 }
+function sms(val,sub_name){
+    val.forEach(element=>{
+        var to=element.phone;
+        const text = element.fullName+' is absent today for '+ sub_name
+        nexmo.message.sendSms(from, to, text, (err, responseData) => {
+            if (err) {
+                console.log(err);
+            }else {
+                if(responseData.messages[0]['status'] === "0") {
+                    console.log("Message sent successfully.");
+                } else {
+                    console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
+                }
+            }
+        })
+    })
+}
 module.exports.getAttendance = async (req,res) => {
     try {
-            var absent = await AttendanceLog.findOne({classSubject_id :req.body.classSubjectID,time:req.body.time,user_id:req.userID},{studentIDs:true});
-            const classID = await ClassSubject.findOne({_id:req.body.classSubjectID},{class_id:true});
+            var absent = await AttendanceLog.findOne({_id:req.body.attendanceLogID,user_id:req.userID},{studentIDs:true,classSubject_id:true});
+            const classID = await ClassSubject.findOne({_id:absent.classSubject_id},{class_id:true});
             const students = await Student.find({class_id:classID.class_id},{fullName:true});
             let ab ={};
             absent.studentIDs.forEach(ele =>{
@@ -73,11 +77,10 @@ module.exports.getAttendance = async (req,res) => {
                     absent : ab[ele._id]?true:false
                 })
             })
-            resString = JSON.stringify(resData);
-            res.send(resString);
+            new Response(200).setData(resData).send(res);
         }
     catch(err) {
-        console.log('error Occurred!!!');
+        new Response(404).send(res);
      }
 }
 
