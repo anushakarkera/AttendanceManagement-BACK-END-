@@ -6,10 +6,9 @@ module.exports = class Response{
         this.send = (resObj) => {
             if(errorResponse[resCode] === undefined)
                 resObj.status(resCode).send(res)
-            else{
+            else
                 resObj.status(resCode).send(
-                    Object.assign(res,{status : 'FAILED'},(Object.keys(res).length > 2)?undefined:errorResponse[resCode]));
-            }
+                    Object.assign(errorResponse[resCode],res,{status : 'FAILED'}));
         }
     }
 }
