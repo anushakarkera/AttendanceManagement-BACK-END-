@@ -139,7 +139,8 @@ module.exports.newPassword = async (req, res, next) => {
 const ObjectId = mongoose.Types.ObjectId;
 
 const getTimeStamp = (date) => {return Math.floor(date.getTime() / 1000).toString(16);}
-function attendanceTaken(user_id,classSubject_id,time ,fromDate){
+function attendanceTaken( user_id, classSubject_id, fromDate){
+
     return new Promise((resolve,reject) => {
         const toDate = new Date(fromDate);
         fromDate.setHours(0,0,0,0);
@@ -150,14 +151,14 @@ function attendanceTaken(user_id,classSubject_id,time ,fromDate){
         AttendanceLog.find({
             _id: {$gte : ObjectId(fromDate_id),$lte : ObjectId(toDate_id)},
             user_id: ObjectId(user_id),
-            classSubject_id:classSubject_id,
-            time:time
+            classSubject_id:classSubject_id
+            
         })
         .then(attendanceLog => {
             if(attendanceLog.length > 0){
-                resolve('true');
+                resolve(attendanceLog[0]._id);
             }else{
-                resolve('false');
+                resolve();
             }
         })
     })
@@ -173,9 +174,7 @@ module.exports.timeTable = async (req, res)=> {
 
     if(req.body.date){ date = new Date(req.body.date); }
     var today  = date.getDay();
-    // console.log(date.getDate());
-    // console.log(date.getFullYear());
-    // console.log(date.getMonth()+1);
+
     await UserTT.findOne({ user_id : req.userID }, { [weekDay[today]] : true }).then(result => {
 
         if(!result[weekDay[today]]){ return new Response(404).send(res);}
@@ -221,7 +220,8 @@ module.exports.timeTable = async (req, res)=> {
             }
         });
         obj.time = element.time;
-        obj.attendanceTaken = await attendanceTaken(req.userID, element.classSubject_id,element.time, new Date())
+        obj.attendanceLogID = await attendanceTaken(req.userID, element.classSubject_id, date);
+        if(obj.attendanceLogID)obj.classSubjectId = undefined
         data.push(obj);
         obj = {};
         ++i;
@@ -236,65 +236,3 @@ module.exports.timeTable = async (req, res)=> {
 
 }).catch(error => { new Response(404).send(res)});
 }
-
-
-
- async function attendanceStatus(userId, classSubjectId, time, date){
-   
-      return false;
-    
-}
-/*
-    
-        var data = [];
-        var i = 0;
-        const weekDay = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
-        const today  = new Date().getDay();
-
-    await UserTT.findOne({user_id : req.userID} , {[weekDay[today]] : true }).then(result => {
-        
-        console.log(result);
-        result[weekDay[today]].forEach(val => {
-
-            ClassSubject.findOne({ _id : val.classSubject_id }).then(allowd => {
-                    //console.log(allowd);
-                Class.findOne({ _id : allowd.class_id }).then(wished =>{
-
-                    Subject.findOne({ _id : allowd.subject_id }).then(complete => {
-
-                        ++i;
-
-                        var obj = {};
-
-                        obj.classSubjectID = val.classSubject_id;
-                        obj.className = wished.name;
-                        obj.roomNumber = wished.roomNumber;
-                        obj.subjectName = complete.name;
-                        obj.time = val.time;
-                        
-                        data.push(obj);
-                    
-                        if(currentTimeTable.length === i){ 
-                            
-                            var a = data;
-                            new Response(200).setData(a).send(res); }
-
-                    }).catch(uncomplete => { new Response(404).send(res); });
-
-                }).catch(unwished=>{ new Response(404).send(res); });
-                   
-            }).catch(unallowed => { new Response(404).send(res); });
-
-        });
-
-    }).catch(error => { new Response(404).send(res); });
-  
-}*/
-// let date = {
-//     yy:2020,
-//     mm:02,
-//     dd:05,
-//     HH:05,
-//     MM:30
-// }
-
