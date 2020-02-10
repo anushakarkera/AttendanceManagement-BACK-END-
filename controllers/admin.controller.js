@@ -7,9 +7,7 @@ module.exports.Deleteuser=async(req,res,next)=>{
             if (!value) throw ('email not found')
             new Response(200).send(res);
         console.log("Deleted Successfully!")
-    }/*,reason => {
-        new Response(404).send(res)
-    }*/)
+    })
     .catch(err => {
         new Response(404).send(res);
     })
