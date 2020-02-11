@@ -3,7 +3,6 @@ var cors = require('cors');
 // db connectorn
 require('./connection').connectDB();
 
-
 //modules for express
 const express = require('express')
 const app = express()
