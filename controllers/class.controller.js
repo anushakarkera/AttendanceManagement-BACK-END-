@@ -15,73 +15,77 @@ const Subject=require('../models/subject.model')
 var crypto = require('crypto');
 const getTimeStamp = (date) => {return Math.floor(date.getTime() / 1000).toString(16)}
 
-module.exports.addAttendance = async (req,res,next) => {
-    let data = req.body;
-    let attendanceLog = new AttendanceLog({
-        _id: getTimeStamp(new Date(req.body.date))+crypto.randomBytes(8).toString("hex"),
-        user_id:    req.userID,
-        classSubject_id : data.classSubjectID,
-        studentIDs : data.studentIDs
+async function hey(){
+   ClassSubject.find({class_id
+        :"5e316ea2c3c64d249c8d443e"}) 
+}
+// module.exports.addAttendance = async (req,res,next) => {
+//     let data = req.body;
+//     let attendanceLog = new AttendanceLog({
+//         _id: getTimeStamp(new Date(req.body.date))+crypto.randomBytes(8).toString("hex"),
+//         user_id:    req.userID,
+//         classSubject_id : data.classSubjectID,
+//         studentIDs : data.studentIDs
         
-    });
-     var studentIDs = data.studentIDs
-     console.log(studentIDs)
-    attendanceLog.save()
-        .then(val => {
-            ClassSubject.find({_id:data.classSubjectID},function(err,result){
-                if (err) throw new Response(404).send(res);
-                Subject.find({_id:result[0].subject_id},function(err,result){
-                    if (err) throw new Response(404).send(res);
-                    var sub_name=result[0].name;
-                    Student.find({"_id":{"$in":studentIDs}},{phone:true,fullName:true})
-                        .then(val=>{
-                            new Response(200).send(res)
-                            sms(val,sub_name)
-                        })
-                })
-            })   
-    },reason => {
-        new Response(422).send(res); 
-    })
-}
-function sms(val,sub_name){
-    val.forEach(element=>{
-        var to=element.phone;
-        const text = element.fullName+' is absent today for '+ sub_name
-        nexmo.message.sendSms(from, to, text, (err, responseData) => {
-            if (err) {
-                console.log(err);
-            }else {
-                if(responseData.messages[0]['status'] === "0") {
-                    console.log("Message sent successfully.");
-                } else {
-                    console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
-                }
-            }
-        })
-    })
-}
-module.exports.getAttendance = async (req,res) => {
-    try {
-            var absent = await AttendanceLog.findOne({_id:req.body.attendanceLogID,user_id:req.userID},{studentIDs:true,classSubject_id:true});
-            const classID = await ClassSubject.findOne({_id:absent.classSubject_id},{class_id:true});
-            const students = await Student.find({class_id:classID.class_id},{fullName:true});
-            let ab ={};
-            absent.studentIDs.forEach(ele =>{
-                ab[ele] = true;
-            })
-            let resData =[]
-            students.forEach(ele =>{
-                resData.push({
-                    studentName : ele.fullName,
-                    absent : ab[ele._id]?true:false
-                })
-            })
-            new Response(200).setData(resData).send(res);
-        }
-    catch(err) {
-        new Response(404).send(res);
-     }
-}
+//     });
+//      var studentIDs = data.studentIDs
+//      console.log(studentIDs)
+//     attendanceLog.save()
+//         .then(val => {
+//             ClassSubject.find({_id:data.classSubjectID},function(err,result){
+//                 if (err) throw new Response(404).send(res);
+//                 Subject.find({_id:result[0].subject_id},function(err,result){
+//                     if (err) throw new Response(404).send(res);
+//                     var sub_name=result[0].name;
+//                     Student.find({"_id":{"$in":studentIDs}},{phone:true,fullName:true})
+//                         .then(val=>{
+//                             new Response(200).send(res)
+//                             sms(val,sub_name)
+//                         })
+//                 })
+//             })   
+//     },reason => {
+//         new Response(422).send(res); 
+//     })
+// }
+// function sms(val,sub_name){
+//     val.forEach(element=>{
+//         var to=element.phone;
+//         const text = element.fullName+' is absent today for '+ sub_name
+//         nexmo.message.sendSms(from, to, text, (err, responseData) => {
+//             if (err) {
+//                 console.log(err);
+//             }else {
+//                 if(responseData.messages[0]['status'] === "0") {
+//                     console.log("Message sent successfully.");
+//                 } else {
+//                     console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
+//                 }
+//             }
+//         })
+//     })
+// }
+// module.exports.getAttendance = async (req,res) => {
+//     try {
+//             var absent = await AttendanceLog.findOne({_id:req.body.attendanceLogID,user_id:req.userID},{studentIDs:true,classSubject_id:true});
+//             const classID = await ClassSubject.findOne({_id:absent.classSubject_id},{class_id:true});
+//             const students = await Student.find({class_id:classID.class_id},{fullName:true});
+//             let ab ={};
+//             absent.studentIDs.forEach(ele =>{
+//                 ab[ele] = true;
+//             })
+//             let resData =[]
+//             students.forEach(ele =>{
+//                 resData.push({
+//                     studentName : ele.fullName,
+//                     absent : ab[ele._id]?true:false
+//                 })
+//             })
+//             new Response(200).setData(resData).send(res);
+//         }
+//     catch(err) {
+//         new Response(404).send(res);
+//      }
+
 
     

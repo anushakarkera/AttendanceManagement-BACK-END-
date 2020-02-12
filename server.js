@@ -1,28 +1,33 @@
-require('dotenv').config()
-var ClassSubject=require('./models/classSubject.model')
-var cors = require('cors');
-// db connectorn
-require('./connection').connectDB();
 
+const express = require('express');
+const environmentSettings = require('dotenv');
+const cors = require('cors');
+const appRouter = require('./routes');
+const bodyParser = require('body-parser');
+// db connectorn
+const connection = require('./connection');
+
+const app = express();
+
+// get all the environment variables to the current Node session or main thread context
+environmentSettings.config();
+
+let PORT = 3000;
+
+if(process.env.SERVER_PORT !== '')
+    PORT = process.env.SERVER_PORT;
+
+connection.connectionToDatabase();
+
+app.use(require('./middleware/auth'));
 
 //modules for express
-const express = require('express')
-const app = express()
 app.use(cors());
-const bodyParser = require('body-parser')
-app.use(require('./middleware/auth'));
-app.use(bodyParser.urlencoded({extended : true}))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended : true}));
+app.use(bodyParser.json());
 
 //will automatically search for index.js in './routes' folder
-app.use(require('./routes'))
-
-var listener = app.listen(process.env.SERVER_PORT, function(){
-    console.log('Listening on port ' + listener.address().port)
+app.use(appRouter);
+app.listen(PORT, function(){
+    console.log('Listening on port ' + PORT)
 });
-async function hey(){
-    var res= await ClassSubject.find({class_id
-          :"5e316ea2c3c64d249c8d443e"});
-          console.log(res) 
-  }
-  hey()
