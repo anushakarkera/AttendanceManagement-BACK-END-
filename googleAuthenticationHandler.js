@@ -61,16 +61,17 @@ module.exports.authenticate = async (req, res, next) => {
     }
 }
 
-
+//A callback method to which the user is redirected once the users signs in for authetication
 module.exports.callback = async (req, res, next) => {
     const code = req.query.code
     if (code) {
-        // Get an access token based on our OAuth code
+        // Retrieving the access token once the user is authenticated
         oAuth2Client.getToken(code, function (err, tokens) {
             if (err) {
                 console.log('Error authenticating')
                 console.log(err);
             } else {
+            //if the token is validated the user is redirected to the starting page
                 console.log('Successfully authenticated');
                 oAuth2Client.setCredentials(tokens);
                 isAuthenticated = true;
