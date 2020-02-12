@@ -10,7 +10,7 @@ router.use('/student',studentRouter)
 const classRouter = require('./class.router')
 router.use('/class',classRouter)
 
-//const adminRouter=require('./admin.router')
-//router.use('/admin',adminRouter)
+const adminRouter=require('./admin.router')
+router.use('/admin',adminRouter)
 
 module.exports = router

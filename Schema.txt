@@ -33,9 +33,39 @@ student{
     _id:
     name:
     //other student related fields:
-    class_id:
+    batch_name:
 }
 
+batch{
+    _id:
+    batch_name:
+    subject_name:
+    students:[
+             {_id:  ,name:}
+             ]
+    price:
+}
+
+studentSubject{
+    _id:
+    student_id:
+    subjects:[
+             {subject_name:    ,batch_name:},
+             {subject_name:    ,batch_name:},
+             ..............................
+             ]
+    fees:
+}
+
+subjectfees{
+    subject_id:
+    default_price:
+    increased_price:[
+                    {batch_name:    ,price:},
+                    {batch_name:    ,price:},
+                    ........................
+                    ]
+}
 userTimeTable{
     _id:
     user_id:
@@ -69,3 +99,4 @@ absentLog{
     attendanceLog_id:
     student_id:
 }
+
