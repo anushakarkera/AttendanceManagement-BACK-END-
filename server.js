@@ -28,7 +28,6 @@ app.use(bodyParser.json());
 
 //will automatically search for index.js in './routes' folder
 app.use(appRouter);
-
 app.listen(PORT, function(){
     console.log('Listening on port ' + PORT)
 });
