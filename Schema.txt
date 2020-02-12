@@ -69,3 +69,13 @@ absentLog{
     attendanceLog_id:
     student_id:
 }
+book{
+    name:
+    publication:
+    pub_year:
+    author:
+    edition:
+    prize:
+    copy:
+    supplier:
+}

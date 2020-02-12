@@ -13,4 +13,7 @@ router.use('/class',classRouter)
 const adminRouter=require('./admin.router')
 router.use('/admin',adminRouter)
 
+const libraryRouter=require('./library.router')
+router.use('/library',libraryRouter)
+
 module.exports = router
