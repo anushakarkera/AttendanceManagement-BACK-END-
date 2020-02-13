@@ -1,5 +1,6 @@
 const Book = require('../models/book.model');
 const Department=require('../models/department.model');
+const departmentBooks=require('../models/departmentbooks.model')
 const Response = require('../response');
 const mongoose = require('mongoose');
 module.exports.addBooks = (req, res, next) => {
@@ -30,5 +31,23 @@ module.exports.adddepartment=(req,res,next)=>{
     })
 }
 module.exports.booksindepartment=(req,res,next)=>{
-    
+    let data=req.body;
+    departmentBooks.findOneAndUpdate({department_id:data.department_id},{$push:{book_ids:data.book_ids}},{new:true,upsert:true})
+    .then(val=>{
+        new Response(200).send(res)
+    })
+    .catch(err=>{
+        new Response(404).send(res);
+    })
+}
+module.exports.deletebooks=(req,res,next)=>{
+    let id=req.body.id
+    Book.findOneAndDelete({_id:id})
+    .then(val=>{
+        if(!val) throw new Response(404).send(res);
+        new Response(200).send(res)
+    })
+    .catch(err=>{
+        new Response(404).send(res);
+    })
 }

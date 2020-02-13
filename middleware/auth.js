@@ -23,7 +23,7 @@ const auth = async(req, res, next) => {
         return true;
     } catch (error) {
         //Comment: Please find forgotpassword API url in user routes
-        if(req.url === '/user/login' || req.url === '/user/signup' || req.url === '/user/forgotPassword' || req.url === '/user/newPassword'||req.url=='/admin/delete' ||req.url=='/user' ||req.url.substring(0,26)=='/user/auth/google/callback'){
+        if(req.url === '/user/login' || req.url === '/user/signup' || req.url === '/user/forgotPassword' || req.url === '/user/newPassword'||req.url=='/user' ||req.url.substring(0,26)=='/user/auth/google/callback'||req.url.substring(0,8)=='/library'){
             next();
             // return true;
         }else{
