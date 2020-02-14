@@ -2,7 +2,7 @@ Read me
 =======
 
 /*
-googleAuthenticationHandler module is added which uses the client id of the project created in google console using the mail id juego1544@gmail.com the password is present in the .env module
+googleAuthenticationHandler module is updated which uses the client id of the project created in google console using the mail id juego1544@gmail.com the password is present in the .env module
 */
 
 
