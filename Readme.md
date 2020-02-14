@@ -1,6 +1,11 @@
 Read me
 =======
 
+/*
+googleAuthenticationHandler module is added which uses the client id of the project created in google console using the mail id juego1544@gmail.com the password is present in the .env module
+*/
+
+
 Please pull the code using `git pull origin master`
 
 Followed by `npm install` to download the latest dependencies of this project.

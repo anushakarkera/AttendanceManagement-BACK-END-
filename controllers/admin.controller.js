@@ -1,4 +1,5 @@
 const User = require('../models/user.model');
+const mongoose = require('mongoose');
 const Student = require('../models/student.model');
 const Subject = require('../models/subject.model');
 const Batch = require('../models/batch.model');
@@ -46,51 +47,41 @@ module.exports.Addsubject=async(req,res,next)=>{
 module.exports.RegisterStudent=async(req,res,next)=>{
     var student=new Student()
     var subs=req.body.subjects;
-    console.log(subs)
     Object.assign(student,req.body)
     student.save()
     .then(value => {
-        var sid=value._id
-        console.log(value,sid)
-        new Response(201).send(res);
         subs.forEach(async (element) => {
-            console.log(element)
-           const exist=await Batch.findOne({subject_id:element})
+            const exist=await Batch.findOne({subject_id:element}).sort({_id:-1})
+            console.log(exist)
             if(exist){
-                console.log(exist)
-                exist.studentIDs.push(sid)
-                exist.save()
+                if(exist.studentIDs.length<10){
+                    exist.studentIDs.push(value._id)
+                    Save(exist,value._id)
+                }else{
+                    Subject.find({_id:element}) //setDefaultsOnInsert:true
                     .then(val=>{
-                        console.log(val)
-                        new Response(201).send(res);
-                    },reason=>
-                    {
-                        new Response(422).send(res);
+                        let batch=new Batch({
+                        subject_id : element,
+                        batch_name: val[0].name+" "+String.fromCharCode((exist.batch_name.charCodeAt(exist.batch_name.length-1))+1), //to get alphabets
+                        studentIDs:value._id
+                        })
+                        Save(batch,value._id)
                     })
-
+                }
             }else{
                 Subject.find({_id:element})
                 .then(val=>{
-                    console.log(val)
-                    let batch=new Batch({
+                        let batch=new Batch({
                         subject_id : element,
                         batch_name: val[0].name+" A",
-                        studentIDs:sid
+                        studentIDs:value._id
                     })
-                    batch.save()
-                    .then(val=>{
-                        console.log(val)
-                        new Response(201).send(res);
-                    },reason=>
-                    {
-                        new Response(404).send(res);
-                    })
-                },reason=>{
-                    new Response(422).send(res);
+                    Save(batch,value._id)
+                    
                 })
             }
     })
-    })
+})
     .catch (err => {
         if(err.name==='ValidationError')
             new Response(400).setError('Required Field Missing').send(res)
@@ -99,4 +90,27 @@ module.exports.RegisterStudent=async(req,res,next)=>{
     
     });
 
+
+
+function Save(collection,sid){
+    console.log(sid)
+    collection.save()
+    .then(val=>{
+        console.log(val)
+        subjectstudents.findOneAndUpdate({student_id:sid},{$push:{subjects:{subject_id:val.subject_id,batch_name:val.batch_name}}},{new:true,upsert:true})
+        .then(val=>{
+            console.log(val+"yaaay")
+            var response={"details":val.subjects}
+            new Response(200).send(response)
+        })
+        .catch(err=>{
+            console.log(err)
+        })
+        
+        new Response(201).send(res);
+    },reason=>
+    {
+        new Response(404).send(res);
+    })
+}
 }

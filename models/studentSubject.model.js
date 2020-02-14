@@ -4,7 +4,7 @@ module.exports=mongoose.model('studentSubject',new mongoose.Schema({
     student_id : ObjectID,
     subjects : [
                 {
-                    subject_name: String,
+                    subject_id: ObjectID,
                     batch_name:String
                 }
             ],

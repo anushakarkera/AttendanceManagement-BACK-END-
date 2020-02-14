@@ -82,6 +82,6 @@ module.exports.getAttendance = async (req,res) => {
     catch(err) {
         new Response(404).send(res);
      }
-}
 
+    }
     
