@@ -51,3 +51,20 @@ module.exports.deletebooks=(req,res,next)=>{
         new Response(404).send(res);
     })
 }
+
+
+module.exports.getDepartments= async(req,res,next)=>{
+    const departments= await departmentBooks.find();
+    if(departments){
+        new Response(200).setData(departments).send(res)
+    }else
+    new Response(404).setError("No Departments Exist").send(res)
+}
+
+module.exports.getBooks= async(req,res,next)=>{
+    const books= await departmentBooks.findOne({department_id:req.body.departmentID},{book_ids:true,_id:false})
+    if(books){
+        new Response(200).setData(books).send(res)
+    }else
+    new Response(404).setError("Department Doesn't Exist").send(res)
+}

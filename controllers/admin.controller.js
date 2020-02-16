@@ -1,4 +1,5 @@
 const User = require('../models/user.model');
+const UserTimeTable = require('../models/userTimeTable.model')
 const mongoose = require('mongoose');
 const Student = require('../models/student.model');
 const Subject = require('../models/subject.model');
@@ -17,30 +18,25 @@ module.exports.deleteUser=async(req,res,next)=>{
             .catch(err=>{
                 new Response(404).send(res);
             })
-
-    }
-
+        }
 module.exports.deleteStudent=async(req,res,next)=>{
    const studentid=req.body.id;
         Student.findOneAndDelete({_id:studentid},{_id:true})
         .then(value => {
-            if(!value) throw new Response(404).send(res);
             new Response(200).send(res);
             console.log("Deleted Successfully!")
         })
-        .catch(err=>{
             new Response(404).send(res);
-        })
 
 }
 module.exports.addSubject=async(req,res,next)=>{
     var subject = new Subject({
-            name:req.body.name
+        name: req.body.name
     });
     subject.save()
         .then(value => {
             new Response(201).send(res);
-        },reason => {
+        }, reason => {
             new Response(422).send(res);
         })
 }
