@@ -12,6 +12,7 @@ const nexmo = new Nexmo({
 const Student = require('../models/student.model');
 const ClassSubject=require('../models/classSubject.model')
 const Subject=require('../models/subject.model')
+const Batch=require('../models/batch.model')
 var crypto = require('crypto');
 const getTimeStamp = (date) => {return Math.floor(date.getTime() / 1000).toString(16)}
 
@@ -20,7 +21,7 @@ module.exports.addAttendance = async (req,res,next) => {
     let attendanceLog = new AttendanceLog({
         _id: getTimeStamp(new Date(req.body.date))+crypto.randomBytes(8).toString("hex"),
         user_id:    req.userID,
-        classSubject_id : data.classSubjectID,
+        batch_id : data.batchID,
         studentIDs : data.studentIDs
         
     });
@@ -28,7 +29,7 @@ module.exports.addAttendance = async (req,res,next) => {
      console.log(studentIDs)
     attendanceLog.save()
         .then(val => {
-            ClassSubject.find({_id:data.classSubjectID},function(err,result){
+            Batch.find({_id:data.batchID},function(err,result){
                 if (err) throw new Response(404).send(res);
                 Subject.find({_id:result[0].subject_id},function(err,result){
                     if (err) throw new Response(404).send(res);
@@ -63,9 +64,9 @@ function sms(val,sub_name){
 }
 module.exports.getAttendance = async (req,res) => {
     try {
-            var absent = await AttendanceLog.findOne({_id:req.body.attendanceLogID,user_id:req.userID},{studentIDs:true,classSubject_id:true});
-            const classID = await ClassSubject.findOne({_id:absent.classSubject_id},{class_id:true});
-            const students = await Student.find({class_id:classID.class_id},{fullName:true});
+            var absent = await AttendanceLog.findOne({_id:req.body.attendanceLogID,user_id:req.userID},{studentIDs:true,batch_id:true});
+            const batchID = await Batch.findOne({_id:absent.batch_id},{_id:true});
+            const students = await Student.find({batch_id:batchID._id},{fullName:true});
             let ab ={};
             absent.studentIDs.forEach(ele =>{
                 ab[ele] = true;
