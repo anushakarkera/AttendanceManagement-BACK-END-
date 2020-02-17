@@ -18,7 +18,8 @@ module.exports.deleteUser=async(req,res,next)=>{
             .catch(err=>{
                 new Response(404).send(res);
             })
-        }
+
+}
 module.exports.deleteStudent=async(req,res,next)=>{
    const studentid=req.body.id;
         Student.findOneAndDelete({_id:studentid},{_id:true})
@@ -27,8 +28,9 @@ module.exports.deleteStudent=async(req,res,next)=>{
             console.log("Deleted Successfully!")
         })
             new Response(404).send(res);
-
 }
+
+
 module.exports.addSubject=async(req,res,next)=>{
     var subject = new Subject({
         name: req.body.name
@@ -123,4 +125,15 @@ module.exports.view=async(req,res,next)=>{
         {
             new Response(404).send(res);
         })
+}
+
+module.exports.assignTimeTable = async (req, res, next) => {
+    const isUserExisting = await User.findOne({ _id: req.body.user_id })
+    if (isUserExisting) {
+        const updatedTimeTable = await UserTimeTable.findOneAndUpdate({ user_id: req.body.user_id }, req.body, { new: true, upsert: true });
+        if (updatedTimeTable) new Response(200).setData(updatedTimeTable).send(res)
+    }
+    else {
+        new Response(404).setError("User Not Found").send(res)
+    }
 }
