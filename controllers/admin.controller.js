@@ -92,23 +92,23 @@ module.exports.registerStudent=async(req,res,next)=>{
     
     });
 
-function Save(collection,sid,sub){
-    collection.save()
-    .then(val=>{
-        console.log(val)
-        fees=fees+val.price
-        subjectstudents.findOneAndUpdate({student_id:sid},{$push:{subjects:{subject:sub,batch_name:val.batch_name}},fees:fees},{new:true,upsert:true})
+    function Save(collection,sid,sub){
+        collection.save()
         .then(val=>{
-            new Response(200).send(res);
+            console.log(val)
+            fees=fees+val.price
+            subjectstudents.findOneAndUpdate({student_id:sid},{$push:{subjects:{subject:sub,batch_name:val.batch_name}},fees:fees},{new:true,upsert:true})
+            .then(val=>{
+                new Response(200).send(res);
+            },reason=>
+            {
+                new Response(422).send(res);
+            })
+        },reason=>
+        {
+            new Response(404).send(res);
         })
-        .catch(err=>{
-            console.log(err)
-        })
-    },reason=>
-    {
-        new Response(404).send(res);
-    })
-}
+    }
 }
 
 //to view the fees details of the student 
