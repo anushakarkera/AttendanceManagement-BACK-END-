@@ -1,10 +1,10 @@
 const router = require('express').Router();
 const libraryController = require('../controllers/library.controller');
 
-router.post('/addbooks',libraryController.addBooks);
-router.post('/adddept',libraryController.adddepartment);
-router.post('/adddeptbooks',libraryController.booksindepartment);
-router.post('/deletebooks',libraryController.deletebooks);
+router.post('/addBooks',libraryController.addBooks);
+router.post('/addDept',libraryController.addDepartment);
+router.post('/adddeptBooks',libraryController.booksInDepartment);
+router.post('/deleteBooks',libraryController.deleteBooks);
 router.post('/getDepartments',libraryController.getDepartments)
 router.post('/getBooks',libraryController.getBooks)
 

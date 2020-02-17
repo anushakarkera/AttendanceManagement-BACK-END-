@@ -19,7 +19,7 @@ module.exports.addBooks = (req, res, next) => {
         
         })
 }
-module.exports.adddepartment=(req,res,next)=>{
+module.exports.addDepartment=(req,res,next)=>{
     var department=new Department();
     Object.assign(department,req.body);
     department.save()
@@ -30,7 +30,7 @@ module.exports.adddepartment=(req,res,next)=>{
         new Response(422).send(res);
     })
 }
-module.exports.booksindepartment=(req,res,next)=>{
+module.exports.booksInDepartment=(req,res,next)=>{
     let data=req.body;
     departmentBooks.findOneAndUpdate({department_id:data.department_id},{$push:{book_ids:data.book_ids}},{new:true,upsert:true})
     .then(val=>{
@@ -40,7 +40,7 @@ module.exports.booksindepartment=(req,res,next)=>{
         new Response(404).send(res);
     })
 }
-module.exports.deletebooks=(req,res,next)=>{
+module.exports.deleteBooks=(req,res,next)=>{
     let id=req.body.id
     Book.findOneAndDelete({_id:id})
     .then(val=>{
