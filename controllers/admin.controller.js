@@ -154,3 +154,7 @@ module.exports.getStudentDetails= async (req,res,next)=>{
         new Response(422).send(res)
     }
 }
+
+module.exports.fillBooks= async(req,res,next)=>{
+    new Response(200).send(res)
+}
