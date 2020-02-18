@@ -10,6 +10,6 @@ router.post('/timeTable',userController.timeTable);
 router.post('/profile',userController.profile);
 router.post('/forgotPassword',userController.forgotPassword);
 router.post('/newPassword',userController.newPassword);
-router.get('/',googleAuthentication.authenticate);
+router.get('/googleLogin',googleAuthentication.authenticate);
 router.get('/auth/google/callback',googleAuthentication.callback)
 module.exports = router;

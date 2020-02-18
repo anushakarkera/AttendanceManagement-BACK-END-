@@ -101,7 +101,6 @@ module.exports.borrowBook=async(req,res,next)=>{
         }
         else{
            new Response(404).setError("Books are unavailable").send(res)
-           // res.redirect('/admin/fillBooks')
         }
     }
     else

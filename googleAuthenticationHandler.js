@@ -61,18 +61,20 @@ module.exports.callback = async (req, res, next) => {
                                 //here we replace the google tokens with the program generated token
                                 const userToken = await existingUser.generateAuthToken()
                                 oAuth2Client.setCredentials({ access_token: tokens.access_token, id_token: userToken, scope: tokens.scope, token_type: tokens.token_type, expiry_date: tokens.expiry_date });
+                                isAuthenticated = false;
                                 new Response(200).setData(userToken).send(res)
                             } 
                             else {
                                 //else we create the user and store it in the database
                                 const user = new User();
                                 //The fields currently accessible are the username,email and token hence other fields are temporarily filled with default messages
-                                Object.assign(user, { email: result.data.email, fullName: result.data.name, token: userToken.token, city: "not accessible", password: 'not needed', phone: 'not accessible', gender: 'not accessible' });
+                                Object.assign(user, { email: result.data.email, fullName: result.data.name, city: "not accessible", password: 'not needed', phone: 'not accessible', gender: 'not accessible' });
                                 user.save().then(async result2 => {
                                     // Once the user is saved ,the token is returned
                                     const newUserToken = await result2.generateAuthToken()
                                     //here we set the credentials with the generated token
                                     oAuth2Client.setCredentials({ access_token: tokens.access_token, id_token: newUserToken, scope: tokens.scope, token_type: tokens.token_type, expiry_date: tokens.expiry_date });
+                                    isAuthenticated = false;
                                     new Response(200).setData(newUserToken).send(res)
                                 }).catch(err => {
                                     console.log(err)
