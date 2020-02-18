@@ -6,5 +6,6 @@ router.delete('/deleteStudent',adminController.deleteStudent);
 router.post('/addSubject',adminController.addSubject);
 router.post('/registerStudent',adminController.registerStudent);
 router.post('/assignTimeTable',adminController.assignTimeTable);
-router.get('/fillBooks',adminController.fillBooks)
+router.post('/getStudentDetails',adminController.getStudentDetails);
+router.post('/fillBooks',adminController.fillBooks);
 module.exports = router;

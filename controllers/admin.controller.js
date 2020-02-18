@@ -128,6 +128,7 @@ module.exports.view=async(req,res,next)=>{
 }
 
 module.exports.assignTimeTable = async (req, res, next) => {
+    try{
     const isUserExisting = await User.findOne({ _id: req.body.user_id })
     if (isUserExisting) {
         const updatedTimeTable = await UserTimeTable.findOneAndUpdate({ user_id: req.body.user_id }, req.body, { new: true, upsert: true });
@@ -137,6 +138,24 @@ module.exports.assignTimeTable = async (req, res, next) => {
         new Response(404).setError("User Not Found").send(res)
     }
 }
+catch(error){
+    new Response(422).send(res)
+}
+}
+
+module.exports.getStudentDetails= async (req,res,next)=>{
+    try{
+    const studentDetails=await Student.findOne({_id:req.body.studentID},{_id:false,class_id:false})
+    if(studentDetails)
+    new Response(200).setData(studentDetails).send(res)
+    else
+    new Response(404).setError('Student not Found')
+    }
+    catch(error){
+        new Response(422).send(res)
+    }
+}
+
 module.exports.fillBooks= async(req,res,next)=>{
-    console.log('here')
+    new Response(200).send(res)
 }
