@@ -121,3 +121,34 @@ module.exports.getBooks = async (req, res, next) => {
         new Response(422).send(res)
     }
 }
+module.exports.returnBooks = async(req,res,next) => {
+    try{
+        const existingBorrower=await BookBorrow.findOne({_id:req.body.id})
+        if(existingBorrower){
+            var timeDiff = (new Date().getTime() - existingBorrower.dueDate.getTime());
+            var diffDays = Math.ceil(timeDiff / (1000*3600* 24))-1;
+            console.log(diffDays)
+            let books=await Book.findOne({_id:existingBorrower.book_id})
+            let bcount=books.copy+1;
+            console.log(bcount)
+            await BookBorrow.findOneAndDelete({_id:req.body.id })
+            await Book.findOneAndUpdate({_id:existingBorrower.book_id},{$set:{"copy":bcount}})
+            if(diffDays>0)
+            {
+                var fineamount=5*diffDays
+                new Response(200).setData("Fine amount is "+fineamount+" Rupees").send(res)
+            }
+            else{
+                new Response(200).send(res)
+            }
+        }
+        else{
+            new Response(404).setError("Borrower Doesn't Exist").send(res)
+        }
+    }
+    catch(error)
+    {
+        console.log(error)
+        new Response(422).send(res)
+    }
+}
