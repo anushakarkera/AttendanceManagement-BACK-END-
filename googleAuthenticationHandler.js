@@ -53,6 +53,7 @@ module.exports.callback = async (req, res, next) => {
                     async function (err, result) {
                         if (err) {
                             console.log(err);
+                            new Response(401).send(res);
                         } else {
                             //Checking if the user is already existing
                             const existingUser = await User.findOne({ email: result.data.email })
@@ -78,6 +79,7 @@ module.exports.callback = async (req, res, next) => {
                                     new Response(200).setData(newUserToken).send(res)
                                 }).catch(err => {
                                     console.log(err)
+                                    new Response(401).send(res)
                                 })
                             }
                         }

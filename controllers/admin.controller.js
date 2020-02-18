@@ -159,7 +159,6 @@ module.exports.getStudentDetails = async (req, res, next) => {
 module.exports.fillBooks = async (req, res, next) => {
     try {
         const validBook = await Book.findOne({ _id: req.body.bookID })
-        console.log(validBook)
         if (validBook)
             new Response(200).send(res)
         else
