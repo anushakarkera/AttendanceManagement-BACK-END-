@@ -8,5 +8,6 @@ router.post('/deleteBooks',libraryController.deleteBooks);
 router.post('/getDepartments',libraryController.getDepartments)
 router.post('/getBooks',libraryController.getBooks)
 router.post('/borrowBooks',libraryController.borrowBook)
+router.post('/returnBook',libraryController.returnBooks)
 
 module.exports = router;
