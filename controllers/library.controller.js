@@ -1,8 +1,10 @@
 const Book = require('../models/book.model');
 const Department=require('../models/department.model');
-const departmentBooks=require('../models/departmentbooks.model')
+const departmentBooks=require('../models/departmentbooks.model');
+const BookBorrow=require('../models/bookBorrow.model');
 const Response = require('../response');
 const mongoose = require('mongoose');
+const date = require('date-and-time');
 module.exports.addBooks = (req, res, next) => {
     var book = new Book();
     Object.assign(book, req.body);
@@ -67,4 +69,39 @@ module.exports.getBooks= async(req,res,next)=>{
         new Response(200).setData(books).send(res)
     }else
     new Response(404).setError("Department Doesn't Exist").send(res)
+}
+
+module.exports.borrowBook=async(req,res,next)=>{
+    const existingBook=await Book.findOne({_id:req.body.book_id})
+    var scount=await BookBorrow.find({student_id:req.body.student_id})
+    console.log(scount.length);
+    if(existingBook){
+        if(existingBook.copy!=0 )
+        {
+            if(scount.length<3){
+                let bcount=existingBook.copy-1;
+                let bookBorrow=new BookBorrow({
+                    student_id:req.body.student_id,
+                    book_id:req.body.book_id,
+                    issueDate:new Date(),
+                    dueDate:date.addDays(new Date(),15)
+                });
+                bookBorrow.save()
+                console.log(bookBorrow)
+                await Book.findOneAndUpdate({_id:req.body.book_id},{$set:{"copy":bcount}})
+                new Response(200).send(res);
+            }
+            else{
+                new Response(404).setError("Maximum 3 Books you can borrow").send(res)
+            }
+        }
+        else{
+           new Response(404).setError("Books are unavailable").send(res)
+           // res.redirect('/admin/fillBooks')
+        }
+    }
+    else
+    {
+        new Response(404).setError("Book Doesn't Exist").send(res)
+    }
 }
