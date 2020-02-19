@@ -7,5 +7,5 @@ router.post('/addSubject',adminController.addSubject);
 router.post('/registerStudent',adminController.registerStudent);
 router.post('/assignTimeTable',adminController.assignTimeTable);
 router.post('/getStudentDetails',adminController.getStudentDetails);
-router.post('/fillBooks',adminController.fillBooks);
+router.post('/getRefillRequests',adminController.refillRequests);
 module.exports = router;
