@@ -14,9 +14,6 @@ module.exports.addBooks = (req, res, next) => {
         }
         )
         .catch(err => {
-            if (err.name === 'ValidationError')
-                new Response(400).setError('Required Field Missing').send(res)
-            else
                 new Response(422).send(res);
 
         })
@@ -57,7 +54,7 @@ module.exports.deleteBooks = (req, res, next) => {
 
 module.exports.getDepartments = async (req, res, next) => {
     try {
-        const departments = await departmentBooks.find();
+        const departments = await Department.find();
         if (departments) {
             new Response(200).setData(departments).send(res)
         } else
@@ -67,13 +64,6 @@ module.exports.getDepartments = async (req, res, next) => {
     }
 }
 
-module.exports.getBooks= async(req,res,next)=>{
-    const books= await departmentBooks.findOne({department_id:req.body.departmentID},{book_ids:true,_id:false})
-    if(books){
-        new Response(200).setData(books).send(res)
-    }else
-    new Response(404).setError("Department Doesn't Exist").send(res)
-}
 
 module.exports.borrowBook=async(req,res,next)=>{
     const existingBook=await Book.findOne({_id:req.body.book_id})
@@ -96,11 +86,11 @@ module.exports.borrowBook=async(req,res,next)=>{
                 new Response(200).send(res);
             }
             else{
-                new Response(404).setError("Maximum 3 Books you can borrow").send(res)
+                new Response(404).setData("Maximum 3 Books you can borrow").send(res)
             }
         }
         else{
-           new Response(404).setError("Books are unavailable").send(res)
+           new Response(404).setData("Books are unavailable").send(res)
         }
     }
     else
@@ -110,11 +100,22 @@ module.exports.borrowBook=async(req,res,next)=>{
 }
 module.exports.getBooks = async (req, res, next) => {
     try {
-        const books = await departmentBooks.findOne({ department_id: req.body.departmentID }, { book_ids: true, _id: false })
-        if (books) {
-            new Response(200).setData(books).send(res)
-        } else
-            new Response(404).setError("Department Doesn't Exist").send(res)
+        if(req.body.departmentID)
+        {
+            const books = await departmentBooks.findOne({ department_id: req.body.departmentID }, { book_ids: true, _id: false })
+            if (books) {
+                new Response(200).setData(books).send(res)
+            }else
+                new Response(404).setError("Department Doesn't Exist").send(res)
+        }
+        else{
+            const books=await Book.find();
+            if(books){
+                new Response(200).setData(books).send(res)
+            }else{
+                new Response(404).setError("Books Doesn't Exist").send(res)
+            }
+        }
     }
     catch (error) {
         new Response(422).send(res)
@@ -147,7 +148,6 @@ module.exports.returnBooks = async(req,res,next) => {
     }
     catch(error)
     {
-        console.log(error)
         new Response(422).send(res)
     }
 }
