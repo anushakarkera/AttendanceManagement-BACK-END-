@@ -5,6 +5,7 @@ const BookBorrow=require('../models/bookBorrow.model');
 const Response = require('../response');
 const mongoose = require('mongoose');
 const date = require('date-and-time');
+const FillBooks= require('../models/fillBooks.model')
 module.exports.addBooks = (req, res, next) => {
     var book = new Book();
     Object.assign(book, req.body);
@@ -101,6 +102,14 @@ module.exports.borrowBook=async(req,res,next)=>{
         }
         else{
            new Response(404).setError("Books are unavailable").send(res)
+           const book= new FillBooks({
+               bookID:req.body.book_id
+           })
+           book.save().then(result=>{
+               console.log(result)
+           },reason=>{
+               console.log("hey")
+           })
         }
     }
     else
