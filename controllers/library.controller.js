@@ -68,6 +68,7 @@ module.exports.getDepartments = async (req, res, next) => {
 
 
 module.exports.borrowBook=async(req,res,next)=>{
+    try{
     const existingBook=await Book.findOne({_id:req.body.book_id})
     var scount=await BookBorrow.find({student_id:req.body.student_id})
     console.log(scount.length);
@@ -107,6 +108,10 @@ module.exports.borrowBook=async(req,res,next)=>{
     {
         new Response(404).setError("Book Doesn't Exist").send(res)
     }
+}
+catch(error){
+    new Response(422).send(res)
+}
 }
 module.exports.getBooks = async (req, res, next) => {
     try {
@@ -174,4 +179,20 @@ module.exports.newBooks = (req, res, next) => {
                 new Response(422).send(res);
 
         })
+}
+module.exports.updateBookCopies=async(req,res,next)=>{
+    try{
+        const existingBook= await Book.findOne({_id:req.body.book_id})
+        var bcount=req.body.copy+existingBook.copy
+        if(existingBook){
+            await Book.findOneAndUpdate({_id:req.body.book_id},{$set:{"copy":bcount}})
+            new Response(200).send(res);
+        }
+        else{
+            new Response(404).setError("Book Doesn't Exist").send(res)
+        }
+    }
+    catch(error){
+        new Response(422).send(res)
+    }
 }
