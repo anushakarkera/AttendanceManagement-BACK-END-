@@ -7,7 +7,8 @@ const Batch = require('../models/batch.model');
 const subjectstudents = require('../models/studentSubject.model');
 const Book = require('../models/book.model')
 const Response = require('../response')
-
+const newBook= require('../models/newBook.model')
+const FillBooks=require('../models/fillBooks.model')
 module.exports.deleteUser = async (req, res, next) => {
     var userid = req.body.id;
     User.findOneAndDelete({ _id: userid })
@@ -156,14 +157,39 @@ module.exports.getStudentDetails = async (req, res, next) => {
     }
 }
 
-module.exports.fillBooks = async (req, res, next) => {
+module.exports.refillRequests = async (req, res, next) => {
     try {
-        const validBook = await Book.findOne({ _id: req.body.bookID })
-        if (validBook)
-            new Response(200).send(res)
-        else
-            new Response(404).setError("Book is Invalid").send(res)
+        const refill = await FillBooks.find({}, { __v: false })
+        const newBooks = await newBook.find({}, { __v: false })
+        if (refill.length != 0 || newBooks.length != 0) {
+            var booksToBeBought = {
+                old: [],
+                new: []
+            }
+
+
+            refill.forEach(async element => {
+                if (element.delivered === false) {
+                    const updated = await FillBooks.findOneAndUpdate({ _id: element._id }, { delivered: true })
+                    booksToBeBought.old.push(element)
+                }
+            })
+            newBooks.forEach(async element1 => {
+                if (element1.delivered === false) {
+                    const hey = await newBook.findOneAndUpdate({ _id: element1._id }, { delivered: true }, { __v: false })
+                    booksToBeBought.new.push(element1)
+                }
+            })
+            if (booksToBeBought.old.length == 0 || booksToBeBought.new.length == 0) {
+                new Response(400).setError('No new Requests').send(res)
+            } else {
+                new Response(200).setData(booksToBeBought).send(res)
+            }
+        } else
+            new Response(400).setError('No new Requests').send(res)
     } catch (error) {
-        new Response(422).send(res)
+        new Response(404).send(res)
     }
+
 }
+
