@@ -108,7 +108,7 @@ module.exports.borrowBook=async(req,res,next)=>{
            book.save().then(result=>{
                console.log(result)
            },reason=>{
-               console.log("hey")
+               console.log(reason)
            })
         }
     }
