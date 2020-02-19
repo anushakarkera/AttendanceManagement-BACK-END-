@@ -104,6 +104,11 @@ module.exports.getBooks = async (req, res, next) => {
         {
             const books = await departmentBooks.findOne({ department_id: req.body.departmentID }, { book_ids: true, _id: false })
             if (books) {
+                const list=[]
+                books.forEach(element => {
+                    const 
+                    
+                });
                 new Response(200).setData(books).send(res)
             }else
                 new Response(404).setError("Department Doesn't Exist").send(res)
