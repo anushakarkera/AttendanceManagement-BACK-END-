@@ -1,7 +1,9 @@
 const Book = require('../models/book.model');
 const Department=require('../models/department.model');
 const departmentBooks=require('../models/departmentbooks.model');
+const FillBooks=require('../models/fillBooks.model')
 const BookBorrow=require('../models/bookBorrow.model');
+const NewBook=require('../models/newBook.model');
 const Response = require('../response');
 const mongoose = require('mongoose');
 const date = require('date-and-time');
@@ -90,7 +92,15 @@ module.exports.borrowBook=async(req,res,next)=>{
             }
         }
         else{
-           new Response(404).setData("Books are unavailable").send(res)
+           new Response(404).setError("Books are unavailable").send(res)
+           const book= new FillBooks({
+               bookID:req.body.book_id
+           })
+           book.save().then(result=>{
+               console.log(result)
+           },reason=>{
+               console.log(reason)
+           })
         }
     }
     else
@@ -103,13 +113,9 @@ module.exports.getBooks = async (req, res, next) => {
         if(req.body.departmentID)
         {
             const books = await departmentBooks.findOne({ department_id: req.body.departmentID }, { book_ids: true, _id: false })
-            if (books) {
-                const list=[]
-                books.forEach(element => {
-                    const 
-                    
-                });
-                new Response(200).setData(books).send(res)
+            const booklist=await Book.find({"_id":{"$in":books.book_ids}})
+            if (booklist) {
+                new Response(200).setData(booklist).send(res)
             }else
                 new Response(404).setError("Department Doesn't Exist").send(res)
         }
@@ -155,4 +161,17 @@ module.exports.returnBooks = async(req,res,next) => {
     {
         new Response(422).send(res)
     }
+}
+module.exports.newBooks = (req, res, next) => {
+    var newBook = new NewBook();
+    Object.assign(newBook, req.body);
+    newBook.save()
+        .then(value => {
+            new Response(200).send(res);
+        }
+        )
+        .catch(err => {
+                new Response(422).send(res);
+
+        })
 }
