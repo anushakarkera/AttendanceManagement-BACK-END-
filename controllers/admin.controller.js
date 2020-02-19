@@ -162,25 +162,30 @@ module.exports.refillRequests = async (req, res, next) => {
         const refill = await FillBooks.find({}, { __v: false })
         const newBooks = await newBook.find({}, { __v: false })
         if (refill.length != 0 || newBooks.length != 0) {
-            var booksToBeBought = {
-                old: [],
-                new: []
+            const booksToBeBought = {
+                old:[],
+                newOne:[]
             }
 
 
             refill.forEach(async element => {
                 if (element.delivered === false) {
-                    const updated = await FillBooks.findOneAndUpdate({ _id: element._id }, { delivered: true })
                     booksToBeBought.old.push(element)
+                    const updated = await FillBooks.findOneAndUpdate({ _id: element._id }, { delivered: true })
+                    
+                   // console.log(booksToBeBought)
                 }
             })
             newBooks.forEach(async element1 => {
                 if (element1.delivered === false) {
+                    booksToBeBought.newOne.push(element1)
                     const hey = await newBook.findOneAndUpdate({ _id: element1._id }, { delivered: true }, { __v: false })
-                    booksToBeBought.new.push(element1)
+                    
+                    //console.log(booksToBeBought)
                 }
             })
-            if (booksToBeBought.old.length == 0 || booksToBeBought.new.length == 0) {
+            //console.log(booksToBeBought)
+            if (booksToBeBought.old.length == 0 && booksToBeBought.new.length == 0) {
                 new Response(400).setError('No new Requests').send(res)
             } else {
                 new Response(200).setData(booksToBeBought).send(res)
