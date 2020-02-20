@@ -171,7 +171,7 @@ module.exports.refillRequests = async (req, res, next) => {
             refill.forEach(async element => {
                 if (element.delivered === false) {
                     booksToBeBought.old.push(element)
-                    const updated = await FillBooks.findOneAndUpdate({ _id: element._id }, { delivered: true })
+                    const updatedRefillRequests = await FillBooks.findOneAndUpdate({ _id: element._id }, { delivered: true })
                     
                    // console.log(booksToBeBought)
                 }
@@ -179,13 +179,13 @@ module.exports.refillRequests = async (req, res, next) => {
             newBooks.forEach(async element1 => {
                 if (element1.delivered === false) {
                     booksToBeBought.newOne.push(element1)
-                    const hey = await newBook.findOneAndUpdate({ _id: element1._id }, { delivered: true }, { __v: false })
+                    const updatedNewRequests = await newBook.findOneAndUpdate({ _id: element1._id }, { delivered: true }, { __v: false })
                     
                     //console.log(booksToBeBought)
                 }
             })
             //console.log(booksToBeBought)
-            if (booksToBeBought.old.length == 0 && booksToBeBought.new.length == 0) {
+            if (booksToBeBought.old.length == 0 && booksToBeBought.newOne.length == 0) {
                 new Response(400).setError('No new Requests').send(res)
             } else {
                 new Response(200).setData(booksToBeBought).send(res)
@@ -193,6 +193,7 @@ module.exports.refillRequests = async (req, res, next) => {
         } else
             new Response(400).setError('No new Requests').send(res)
     } catch (error) {
+        console.log(error)
         new Response(404).send(res)
     }
 
