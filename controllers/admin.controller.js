@@ -1,6 +1,6 @@
 const User = require('../models/user.model');
 const UserTimeTable = require('../models/userTimeTable.model')
-const mongoose = require('mongoose');
+const newUserTimeTable = require('../models/newUserTimeTable.model')
 const Student = require('../models/newStudent.model');
 const Subject = require('../models/subject.model');
 const Batch = require('../models/batch.model');
@@ -18,7 +18,6 @@ const nexmo = new Nexmo({
     apiSecret: NEXMO_API_SECRET
   })
 const Book = require('../models/book.model')
-const Response = require('../response')
 const newBook= require('../models/newBook.model')
 const FillBooks=require('../models/fillBooks.model')
 
@@ -116,12 +115,13 @@ module.exports.registerStudent=async(req,res,next)=>{
                 })
             }
         })
+    })
         .catch(err => {
             if (err.name === 'ValidationError')
                 new Response(400).setError('Required Field Missing').send(res)
             else
                 new Response(409).send(res);
-
+        })
     function Save(collection,sid,sub){
         collection.save()
         .then(val=>{
@@ -139,10 +139,7 @@ module.exports.registerStudent=async(req,res,next)=>{
             new Response(404).send(res);
         })
     }
-})
-    })
 }
-
 //to view the fees details of the student 
 module.exports.view=async (req,res,next)=>{
         var studentid=req.body.studentid
@@ -155,11 +152,14 @@ module.exports.view=async (req,res,next)=>{
             data.status=val[0].status
             data.pending=val[0].pending
             //new Response(200).setData(data).send(res)
-            if(req.body.amount){
+            if(req.body.paid=="true" && req.body.amount){
                 await subjectstudents.findOneAndUpdate({student_id:studentid},{status:{paid:req.body.paid,amount:req.body.amount}}) //if partially paid 
                 .then(val=>{
-                    new Response(200).setData(data).send(res)
                     console.log(val)
+                    data.status=val.status
+                    data.pending=val.pending
+                    new Response(200).setData(data).send(res)
+                    
                 },reason=>
                 {
                     new Response(422).send(res);
@@ -168,16 +168,18 @@ module.exports.view=async (req,res,next)=>{
             else if(req.body.paid=="true" && !(req.body.amount)){
                 await subjectstudents.findOneAndUpdate({student_id:studentid},{status:{paid:req.body.paid}}) //if fully paid 
                 .then(val=>{
-                    new Response(200).setData(data).send(res);
                     console.log(val)
+                    data.status=val.status
+                    data.pending=val.pending
+                    new Response(200).setData(data).send(res);
+                    
                 },reason=>
                 {
                     new Response(422).send(res);
                 }) 
             }
-            else{
-                new Response(200).setData(data).send(res)
-            } 
+            else
+                new Response(200).setData(data).send(res);
         },reason=>
         {
             new Response(404).send(res);
@@ -323,13 +325,22 @@ module.exports.getAttendance = async (req,res) => {
                 else
                     new Response(422).send(res);
             })
+            if(req.body.amount){
+                subjectstudents.findOne({student_id:req.body.studentID}) //if partially paid 
+                .then(async val=>{
+                await subjectstudents.findOneAndUpdate({student_id:req.body.studentID},{status:{paid:true,amount:(val.status.amount+req.body.amount)}}) //if partially paid 
+            .then(val=>{
+                console.log(val)
+         })
+    })
+}
     }
 
     module.exports.assignTimeTableBatch = async (req, res, next) => {
         try{
         const isUserExisting = await User.findOne({ _id: req.body.user_id })
         if (isUserExisting) {
-            const updatedTimeTable = await UserTimeTable.findOneAndUpdate({ user_id: req.body.user_id }, req.body, { new: true, upsert: true });
+            const updatedTimeTable = await newUserTimeTable.findOneAndUpdate({ user_id: req.body.user_id }, req.body, { new: true, upsert: true });
             if (updatedTimeTable) new Response(200).setData(updatedTimeTable).send(res)
         }
         else {
