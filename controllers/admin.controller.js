@@ -92,8 +92,6 @@ module.exports.registerStudent=async(req,res,next)=>{
                         studentIDs:value._id,
                         price:req.body.price
                         })
-                        
-                        console.log(batch.price.default)
                         Save(batch,value._id,val[0].name)
                         Object.assign(student)
                     })
@@ -143,15 +141,40 @@ module.exports.registerStudent=async(req,res,next)=>{
 }
 
 //to view the fees details of the student 
-module.exports.view=async(req,res,next)=>{
+module.exports.view=async (req,res,next)=>{
         var studentid=req.body.studentid
-        subjectstudents.find({student_id:studentid})
-        .then(val=>{
+        await subjectstudents.find({student_id:studentid})
+        .then( async val=>{
             console.log(val)
             var data={}
             data.details=val[0].subjects
             data.totalFees=val[0].fees
-            new Response(200).setData(data).send(res)
+            data.status=val[0].status
+            data.pending=val[0].pending
+            //new Response(200).setData(data).send(res)
+            if(req.body.amount){
+                await subjectstudents.findOneAndUpdate({student_id:studentid},{status:{paid:req.body.paid,amount:req.body.amount}}) //if partially paid 
+                .then(val=>{
+                    new Response(200).setData(data).send(res)
+                    console.log(val)
+                },reason=>
+                {
+                    new Response(422).send(res);
+                })
+            }
+            else if(req.body.paid=="true" && !(req.body.amount)){
+                await subjectstudents.findOneAndUpdate({student_id:studentid},{status:{paid:req.body.paid}}) //if fully paid 
+                .then(val=>{
+                    new Response(200).setData(data).send(res);
+                    console.log(val)
+                },reason=>
+                {
+                    new Response(422).send(res);
+                }) 
+            }
+            else{
+                new Response(200).setData(data).send(res)
+            } 
         },reason=>
         {
             new Response(404).send(res);
@@ -279,4 +302,33 @@ module.exports.getAttendance = async (req,res) => {
         }).catch(error => {
             new Response(404).setData('Student list not found for the class').send(res);
         });
+    }
+
+    module.exports.studentProfileUpdate=async (req,res,next)=>{
+        var bodyinput = req.body;
+        Student.findOneAndUpdate({ _id: req.body.studentID }, { $set: bodyinput })
+            .then(value => {
+                new Response(200).send(res);
+            })
+            .catch(err => {
+                if (bodyinput['email'])
+                    new Response(409).send(res)
+                else
+                    new Response(422).send(res);
+            })
+    }
+
+    module.exports.assignTimeTableBatch = async (req, res, next) => {
+        try{
+        const isUserExisting = await User.findOne({ _id: req.body.user_id })
+        if (isUserExisting) {
+            const updatedTimeTable = await UserTimeTable.findOneAndUpdate({ user_id: req.body.user_id }, req.body, { new: true, upsert: true });
+            if (updatedTimeTable) new Response(200).setData(updatedTimeTable).send(res)
+        }
+        else {
+            new Response(404).setError("User Not Found").send(res)
+        }
+    }catch(error){
+        new Response(422).send(res)
+    }
     }

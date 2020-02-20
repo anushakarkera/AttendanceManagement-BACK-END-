@@ -12,4 +12,6 @@ router.post('/viewFee',adminController.view);
 router.post('/attendance',adminController.addAttendance);
 router.post('/getAttendance',adminController.getAttendance)
 router.post('/list',adminController.list);
+router.post('/assignTimeTableBatch',adminController.assignTimeTableBatch);
+router.post('/studentProfileUpdate',adminController.studentProfileUpdate);
 module.exports = router;

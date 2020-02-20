@@ -1,7 +1,7 @@
 //student schema
 const mongoose = require('mongoose');
 
-module.exports=mongoose.model('Student',new mongoose.Schema({
+module.exports=mongoose.model('newStudent',new mongoose.Schema({
     fullName: String,
     gender  : String,
     email   : { type: String,   unique: true    },
