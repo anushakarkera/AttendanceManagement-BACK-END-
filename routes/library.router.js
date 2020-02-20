@@ -10,4 +10,5 @@ router.post('/getBooks',libraryController.getBooks)
 router.post('/borrowBooks',libraryController.borrowBook)
 router.post('/returnBook',libraryController.returnBooks)
 router.post('/getnewBooks',libraryController.newBooks)
+router.post('/updatebookCopies',libraryController.updateBookCopies);
 module.exports = router;
