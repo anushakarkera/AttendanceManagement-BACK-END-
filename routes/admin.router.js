@@ -14,4 +14,5 @@ router.post('/getAttendance',adminController.getAttendance)
 router.post('/list',adminController.list);
 router.post('/assignTimeTableBatch',adminController.assignTimeTableBatch);
 router.post('/studentProfileUpdate',adminController.studentProfileUpdate);
+router.post('/getRefillRequests',adminController.refillRequests);
 module.exports = router;
