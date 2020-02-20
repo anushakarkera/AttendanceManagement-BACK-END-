@@ -22,3 +22,7 @@ module.exports.list = async (req,res)=>{
         new Response(404).setData('Student list not found for the class').send(res);
     });
 }
+
+module.exports.getAttendanceHistory= async(req,res,next)=>{
+    console.log("hey")
+}
