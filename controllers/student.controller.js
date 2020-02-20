@@ -23,6 +23,3 @@ module.exports.list = async (req,res)=>{
     });
 }
 
-module.exports.getAttendanceHistory= async(req,res,next)=>{
-    console.log("hey")
-}
