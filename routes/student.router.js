@@ -4,4 +4,5 @@ const studentController = require('../controllers/student.controller')
 
 //student routing
 router.post('/list',studentController.list);
+
 module.exports = router;

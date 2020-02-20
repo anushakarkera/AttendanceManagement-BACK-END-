@@ -22,3 +22,4 @@ module.exports.list = async (req,res)=>{
         new Response(404).setData('Student list not found for the class').send(res);
     });
 }
+

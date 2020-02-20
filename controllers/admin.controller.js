@@ -6,6 +6,7 @@ const Subject = require('../models/subject.model');
 const Batch = require('../models/batch.model');
 const subjectstudents = require('../models/studentSubject.model');
 const Response=require('../response')
+const NewAttendanceLog=require('../models/newAttendanceLog.model')
 var crypto = require('crypto');
 const getTimeStamp = (date) => {return Math.floor(date.getTime() / 1000).toString(16)}
 const AttendanceLog = require('../models/newAttendanceLog.model');
@@ -394,3 +395,30 @@ module.exports.refillRequests = async (req, res, next) => {
 
 }
 
+module.exports.getAttendanceHistory = async (req, res, next) => {
+    try {
+        const batchID = await NewAttendanceLog.find({ studentIDs: [req.body.studentID] }, { _id: true, batch_id: true })
+        const attendanceDetails = []
+        var itemsProcessed=0
+        if (batchID.length != 0) {
+            batchID.forEach(async element => {
+                const batch = await Batch.findOne({ _id: element.batch_id }, { _id: false, batch_name: true });
+                attendanceDetails.push({ date: element._id.getTimestamp(), batchName: batch.batch_name })
+                itemsProcessed++
+                if(itemsProcessed===batchID.length)
+                sendResponse(attendanceDetails)
+            })
+           function sendResponse(attendanceDetails){
+            if(attendanceDetails.length!=0){
+            new Response(200).setData(attendanceDetails).send(res)
+            }else
+            new Response(400).setError('Invalid Batch').send(res)
+            }
+        }else
+        new Response(404).setError('Student not found').send(res)
+    }
+    catch (error) {
+        console.log(error)
+        new Response(422).send(res)
+    }
+}
